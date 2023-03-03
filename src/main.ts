@@ -6,6 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('bootstrap'); // Create a logger instance with a context
 
+  app.setGlobalPrefix('pachitaV1');
+
   logger.debug('Starting application...'); // Log a debug message
 
 
