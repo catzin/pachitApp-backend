@@ -23,6 +23,14 @@ import { Ubicacion } from './user/entity/ubicacion.entity';
 import { HorarioContacto } from './user/entity/horario-contacto.entity';
 import { Recordatorio } from './organizacion/entitites/recordatorio.entity';
 import { MascotaFavorita } from './mascota/entities/mascota-favorita.entity';
+import { CatalogsModule } from './catalogs/catalogs.module';
+import { civilState } from './catalogs/entities/civil-state.entity';
+import { Sex } from './catalogs/entities/sex.entity';
+import { UserType } from './catalogs/entities/user-type.entity';
+import { Ocupation } from './catalogs/entities/ocupation.entity';
+import { Residence } from './catalogs/entities';
+import { RelationShip } from './catalogs/entities/relationShip.entity';
+import { DocumentType } from './catalogs/entities/document-entity';
 
 
 
@@ -42,7 +50,7 @@ import { MascotaFavorita } from './mascota/entities/mascota-favorita.entity';
       synchronize: true,
     }),
     AuthModule,
-    // CatalogsModule,
+    CatalogsModule,
     CommonModule,
     MascotaModule,
     OrganizacionModule,
@@ -54,6 +62,8 @@ import { MascotaFavorita } from './mascota/entities/mascota-favorita.entity';
   ],
   controllers: [OrganizacionController],
   providers: [OrganizacionService],
+     
+
 })
 export class AppModule {}
 
