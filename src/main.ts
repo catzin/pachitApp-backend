@@ -13,6 +13,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('pachitaV1');
   
+
   logger.debug('Starting application...'); // Log a debug message
 
   app.useGlobalPipes(
