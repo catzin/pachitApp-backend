@@ -1,16 +1,20 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsString, IsNumber } from 'class-validator';
+import { IsDate, IsEmail, IsString, IsNumber, MinLength, isBoolean, IsBoolean } from 'class-validator';
 import { Unique } from 'typeorm';
 import { isDate } from 'util/types';
 
 @Unique(['correo'])
 export class CreateUserDto {
+
+  @MinLength(1)
   @IsString()
   nombre: string;
 
+  @MinLength(1)
   @IsString()
   apellidoPaterno: string;
 
+  @MinLength(1) 
   @IsString()
   apellidoMaterno: string;
 
@@ -51,4 +55,8 @@ export class CreateUserDto {
   
   @IsNumber()
   Tipodomicilio_idTipoDomicilio: number; 
+
+  @IsBoolean()
+  isactive: boolean;
+
 }

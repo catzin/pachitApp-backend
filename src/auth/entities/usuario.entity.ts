@@ -1,10 +1,9 @@
-import { IsNumber } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { civilState } from '../../catalogs/entities/civil-state.entity';
+import { civilState } from "src/catalogs/entities";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('usuario')
 export class Usuario{
-    
+
     @PrimaryGeneratedColumn('uuid') 
     idusuario:string;
 
@@ -26,7 +25,7 @@ export class Usuario{
     @Column('text',
     {unique:true}
     )
-    correo: string;  
+    correo: string; 
 
     @Column('text',{
         select:false
@@ -36,10 +35,10 @@ export class Usuario{
     @Column()
     fotoPerfil: string; 
 
-    @Column()
+    @Column({unique:true})
     linkFacebook: string; 
 
-    @Column()
+    @Column({unique:true})
     linkInstagram: string; 
 
     @Column()
@@ -57,11 +56,29 @@ export class Usuario{
     @Column()
     Tipodomicilio_idTipoDomicilio: number; 
 
-    @Column()
+    @Column('bool',{
+        default:true
+    })
     isactive: boolean;
 
     @ManyToOne(() => civilState)
     @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
     estadoCivil: civilState;
+
+    @BeforeInsert()
+    checkFieldsBeforeInsert(){
+        this.correo = this.correo.toLocaleLowerCase().trim();
+        
+    }
+
+    @BeforeUpdate()
+    checkFieldsBeforeUpdate(){
+        this.checkFieldsBeforeInsert();
+        
+    }
+
+    // @OneToMany(() => Usuario, (usuario) => usuario.organizacion)
+    // usuarios: Usuario[];
+
 
 }

@@ -1,10 +1,7 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class UpdateUserDto {
-
-  @IsNumber()
-  idusuario: number; 
 
   @IsString()
   nombre: string;
@@ -52,4 +49,7 @@ export class UpdateUserDto {
   
   @IsNumber()
   Tipodomicilio_idTipoDomicilio: number;
+
+  @IsBoolean()
+  isactive: boolean;
 }
