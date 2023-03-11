@@ -1,8 +1,8 @@
-import { Usuario } from 'src/auth/entities/usuario.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Usuario } from 'src/user/entity/usuario.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'organizacion' })
-export class OrganizacionEntity {
+export class Organizacion{
   @PrimaryGeneratedColumn('uuid')
   idorganizacion: string;
 
@@ -33,9 +33,9 @@ export class OrganizacionEntity {
   @Column({ type: 'varchar', length: 45, nullable: true })
   linkDonacion: string;
 
-//   @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones)
-//   usuario: Usuario;
+  @OneToOne(() => Usuario)
+  @JoinColumn()
+  usuario_idusuario: Usuario
 
-  @Column()
-  usuario_idusuario: string;
+
 }

@@ -18,14 +18,15 @@ import {
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
+import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
   
   @Controller('user')
   export class UserController {
     constructor(private userService: UserService) {}
   
     @Get()
-    @SetMetadata('roles',[1,2])
-    @UseGuards(AuthGuard(), UserRoleGuard)
+    // @SetMetadata('roles',[1,2])
+    // @UseGuards(AuthGuard(), UserRoleGuard)
     findAll(@Query() paginationDto:PaginationDto) {
       return this.userService.findAll(paginationDto);
     }
@@ -59,7 +60,14 @@ import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
       return this.userService.update(idusuario,updateUserDto);
     }
   
-
+    //Crea organizacion
+    @Post(':idusuario/organizacion')
+    createOrganizacion(
+    @Param('idusuario') idusuario:string,
+    @Body() createOrganizacionDto: CreateOrganizacionDto
+    ){
+      this.userService.createOrganizacion(idusuario,createOrganizacionDto);
+    }
   
  
   }

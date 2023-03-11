@@ -1,8 +1,9 @@
 import { IsNumber } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { civilState } from '../../catalogs/entities/civil-state.entity';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+//import { civilState } from '../../catalogs/entities/civil-state.entity';
+import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
 
-@Entity()
+@Entity("usuario")
 export class Usuario{
     
     @PrimaryGeneratedColumn('uuid') 
@@ -23,10 +24,9 @@ export class Usuario{
     @Column()
     fechaRegistro: Date;
 
-    @Column('text',
-    {unique:true}
-    )
-    correo: string;  
+
+    @Column()
+    correo: string;
 
     @Column('text',{
         select:false
@@ -60,8 +60,12 @@ export class Usuario{
     @Column()
     isactive: boolean;
 
-    @ManyToOne(() => civilState)
-    @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
-    estadoCivil: civilState;
+    // @ManyToOne(() => civilState)
+    // @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
+    // estadoCivil: civilState;
+
+    @OneToOne(() => Organizacion)
+    @JoinColumn()
+    organizacion: Organizacion
 
 }

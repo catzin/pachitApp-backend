@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,6 +7,8 @@ import { Usuario } from './entity/usuario.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
 import { use } from 'passport';
+import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
+import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 
 @Injectable()
 export class UserService {
@@ -16,6 +18,8 @@ export class UserService {
   constructor(
     @InjectRepository(Usuario)
     private userRepository: Repository<Usuario>,
+    @InjectRepository(Organizacion)
+    private readonly organizacionRepository: Repository<Organizacion>
   ) {}
 
 
@@ -138,4 +142,25 @@ export class UserService {
       const result = await query.delete().execute();
       console.log(result.affected); // imprime el número de usuarios eliminados
     }
+
+    //CREA ORGANIZACION sin verificacion
+    async createOrganizacion(idusuario: string, organizacion:CreateOrganizacionDto){
+      const user =  await this.userRepository.findOne({
+           where:{
+           idusuario,
+           },
+      });
+
+      if(!user)
+          throw new HttpException('User not found',HttpStatus.NOT_FOUND);
+
+      const newOrganizacion =  this.organizacionRepository.create(organizacion);
+
+      const savedOrganizacion = await this.organizacionRepository.save(newOrganizacion);
+
+      user.organizacion = savedOrganizacion;
+
+      return this.userRepository.save(user);
+   }
+
 }
