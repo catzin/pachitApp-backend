@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsOptional } from 'class-validator';
+import { IsString, IsDate, IsOptional, IsUUID } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateOrganizacionDto{
@@ -32,6 +32,10 @@ export class CreateOrganizacionDto{
     @IsString()
     @IsOptional()
     linkDonacion?: string;
+
+    // @IsString()
+    // @IsUUID()
+    // usuario: number;
   
     // @IsString()
     // usuario_idusuario: string;

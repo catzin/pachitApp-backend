@@ -6,6 +6,13 @@ import { AuthModule } from './auth/auth.module';
 
 import { CommonModule } from './common/common.module';
 import { Organizacion } from './organizacion/entitites/organizacion.entity';
+import { Peticion } from './user/entity/peticion.entity';
+import { MascotaModule } from './mascota/mascota.module';
+import { Mascota } from './mascota/entities/mascota.entity';
+import { MascotaImage } from './mascota/entities/mascota-image.entity';
+import { OrganizacionController } from './organizacion/organizacion.controller';
+import { OrganizacionService } from './organizacion/organizacion.service';
+import { OrganizacionModule } from './organizacion/organizacion.module';
 
 
 
@@ -21,15 +28,17 @@ import { Organizacion } from './organizacion/entitites/organizacion.entity';
       database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion],
+      Organizacion,Peticion,Mascota,MascotaImage],
       synchronize: true,
     }),
     AuthModule,
     // CatalogsModule,
-    CommonModule
+    CommonModule,
+    MascotaModule,
+    OrganizacionModule
 
     ],
-  controllers: [],
-  providers: [],
+  controllers: [OrganizacionController],
+  providers: [OrganizacionService],
 })
 export class AppModule {}

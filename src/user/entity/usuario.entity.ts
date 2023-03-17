@@ -2,6 +2,7 @@ import { IsNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 //import { civilState } from '../../catalogs/entities/civil-state.entity';
 import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
+import { Peticion } from './peticion.entity';
 
 @Entity("usuario")
 export class Usuario{
@@ -60,12 +61,15 @@ export class Usuario{
     @Column()
     isactive: boolean;
 
-    // @ManyToOne(() => civilState)
-    // @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
-    // estadoCivil: civilState;
+    //Relaciones uno a uno
+    @OneToOne(type => Organizacion, organizacion => organizacion.usuario)
+    organizacion: Organizacion;
 
-    @OneToOne(() => Organizacion)
-    @JoinColumn()
-    organizacion: Organizacion
+    //Relaciones uno a uno
+    @OneToOne(type => Peticion, peticion => peticion.usuario)
+    peticion: Peticion;
+
+
+    
 
 }
