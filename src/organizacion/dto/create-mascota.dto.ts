@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsNotEmpty, IsEnum, IsArray, IsOptional } from 'class-validator';
 
 enum NivelActividad {
   BAJO = 'BAJO',
@@ -51,4 +51,9 @@ export class CreateMascotaDto{
   @IsNotEmpty()
   @IsEnum(TipoRaza)
   tipoRaza: TipoRaza;
+
+  @IsString({each:true})
+  @IsArray()
+  @IsOptional()
+  images?:string[];
 }

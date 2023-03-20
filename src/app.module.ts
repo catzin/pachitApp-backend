@@ -9,7 +9,7 @@ import { Organizacion } from './organizacion/entitites/organizacion.entity';
 import { Peticion } from './user/entity/peticion.entity';
 import { MascotaModule } from './mascota/mascota.module';
 import { Mascota } from './mascota/entities/mascota.entity';
-import { MascotaImage } from './mascota/entities/mascota-image.entity';
+import { MascotaImagen } from './mascota/entities/mascota-imagen.entity';
 import { OrganizacionController } from './organizacion/organizacion.controller';
 import { OrganizacionService } from './organizacion/organizacion.service';
 import { OrganizacionModule } from './organizacion/organizacion.module';
@@ -28,7 +28,7 @@ import { OrganizacionModule } from './organizacion/organizacion.module';
       database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,MascotaImage],
+      Organizacion,Peticion,Mascota,MascotaImagen],
       synchronize: true,
     }),
     AuthModule,

@@ -5,6 +5,7 @@ import { Organizacion } from './entitites/organizacion.entity';
 import { Equal, Repository } from 'typeorm';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
 import { Mascota } from 'src/mascota/entities/mascota.entity';
+import { MascotaImagen } from '../mascota/entities/mascota-imagen.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -13,7 +14,9 @@ export class OrganizacionService {
         @InjectRepository(Organizacion)
         private readonly organizacionRepository: Repository<Organizacion>,
         @InjectRepository(Mascota)
-        private readonly mascotaRepository: Repository<Mascota>
+        private readonly mascotaRepository: Repository<Mascota>,
+        @InjectRepository(MascotaImagen)
+        private readonly mascotaImageRepository: Repository<MascotaImagen>
       ) {}
     
     
@@ -44,27 +47,32 @@ export class OrganizacionService {
 
 
     //Crea mascota
-    async createMascota(idorganizacion: string, mascota:CreateMascotaDto){ 
+    async createMascota(idorganizacion: string, createMascotaDto:CreateMascotaDto){ 
         try{  
+
+            //tema de imagenes
+            const {images = [], ...mascotaDetails} = createMascotaDto;
+
         //Busca el id de la organizacion para ver si le puede asociar una mascota   
             const organizacionFound = await this.organizacionRepository.findOne({
                 where:{
-                idorganizacion,
+                idorganizacion
                 },
             });
             
             if(!organizacionFound) {
                 return {
                     status: HttpStatus.UNAUTHORIZED,
-                    message: 'No se encuentra la organizacion',
+                    message: 'No se encuentra la organizacion'
                 };
             }
             //Constante donde crea una mascota
             const newMascota = this.mascotaRepository.create({
-                ...mascota,
+                ...mascotaDetails,
                 organizacion: organizacionFound,
+                images: images.map( image => this.mascotaImageRepository.create({url:image}))
             });
-            
+             
             return this.mascotaRepository.save(newMascota);
             
         } catch (error) {

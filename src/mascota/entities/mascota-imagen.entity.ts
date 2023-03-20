@@ -2,7 +2,7 @@ import { Column, PrimaryColumn, PrimaryGeneratedColumn, ManyToOne, Entity } from
 import { Mascota } from './mascota.entity';
 
 @Entity("mascotaimage")
-export class MascotaImage{
+export class MascotaImagen{
     @PrimaryGeneratedColumn()
     idimagen:number;
 

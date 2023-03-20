@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { MascotaImage } from './mascota-image.entity';
+import { MascotaImagen } from './mascota-imagen.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 
 @Entity("mascota")
@@ -26,10 +26,11 @@ export class Mascota {
   sexo: string;
 
   @OneToMany(
-    () => MascotaImage,
-    (mascotaImage) => mascotaImage.mascota
+    () => MascotaImagen,
+    (mascotaImagen) => mascotaImagen.mascota,
+    {cascade:true}
   )
-  images: MascotaImage
+  images?: MascotaImagen[]
 
 
   @ManyToOne(() => Organizacion)
