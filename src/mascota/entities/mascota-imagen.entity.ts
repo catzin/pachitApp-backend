@@ -1,7 +1,7 @@
 import { Column, PrimaryColumn, PrimaryGeneratedColumn, ManyToOne, Entity } from 'typeorm';
 import { Mascota } from './mascota.entity';
 
-@Entity("mascotaimage")
+@Entity("mascotaimagen")
 export class MascotaImagen{
     @PrimaryGeneratedColumn()
     idimagen:number;
@@ -11,7 +11,8 @@ export class MascotaImagen{
 
     @ManyToOne(
         () => Mascota,
-        (mascota) =>mascota.images
+        (mascota) =>mascota.images,
+        {onDelete: 'CASCADE'}
 
     )
     mascota:Mascota

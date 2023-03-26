@@ -1,7 +1,8 @@
-import { Body, Controller, Get, HttpStatus, InternalServerErrorException, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { OrganizacionService } from './organizacion.service';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
+import { UpdateMascotaDto } from './dto/update-mascota.dto';
 
 @Controller('organizacion')
 export class OrganizacionController {
@@ -9,19 +10,53 @@ export class OrganizacionController {
     constructor(private organizacionService: OrganizacionService) {}
   
     //Obtiene organizaciones con un limit y offset
-    @Get('vertodas')
+    @Get('vertodasOrganizaciones')
     // @SetMetadata('roles',[1,2])
     // @UseGuards(AuthGuard(), UserRoleGuard)
-    findAll(@Query() paginationDto:PaginationDto) {
-      return this.organizacionService.findAll(paginationDto);
+    findAllOrganizaciones(@Query() paginationDto:PaginationDto) {
+      return this.organizacionService.findAllOrganicaciones(paginationDto);
     }
 
+    //Obtiene mascotas con un limit y offset
+    @Get('vertodasMascotas')
+    // @SetMetadata('roles',[1,2])
+    // @UseGuards(AuthGuard(), UserRoleGuard)
+    findAllMascotas(@Query() paginationDto:PaginationDto) {
+      return this.organizacionService.findAllMascotas(paginationDto);
+    }    
+
     //Obtiene todas las mascotas de la organización
-    @Get(':idorganizacion/mascotas')
-    findAllMascotas(
+    @Get(':idorganizacion/mascotas-organizacion')
+    findAllMascotasxOrganizacion(
     @Param('idorganizacion') idorganizacion: string, 
     @Query() paginationDto: PaginationDto) {
         return this.organizacionService.findMascotasbyOrganizacion(idorganizacion,paginationDto);
+    }
+
+    //Obtiene la mascota por id
+    @Get(':id/mascota')
+    findMascotabyId(
+    @Param('id') id: number, 
+    @Query() paginationDto: PaginationDto) {
+        return this.organizacionService.findMascotasbyId(id);
+    }
+
+    //Actualiza la mascota por id con o sin imagenes
+    @Patch(':id/mascota')
+    updateMascota(
+    @Param('id') id: number, 
+    @Body() updateMascotaDto: UpdateMascotaDto
+    )
+    {
+        return this.organizacionService.updateMascota(id,updateMascotaDto);
+    }   
+
+    //Elimina una mascota por id
+    @Delete(':id/mascota/delete')
+    deleteMascota(
+    @Param('id') id: number)
+    {
+        this.organizacionService.deleteMascota(id);
     }
 
 
@@ -46,6 +81,8 @@ export class OrganizacionController {
         message: 'Mascota created successfully',
       };
     }
+
+
 
 
 

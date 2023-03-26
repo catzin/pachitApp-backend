@@ -28,7 +28,8 @@ export class Mascota {
   @OneToMany(
     () => MascotaImagen,
     (mascotaImagen) => mascotaImagen.mascota,
-    {cascade:true}
+    {cascade:true, eager:true}
+
   )
   images?: MascotaImagen[]
 

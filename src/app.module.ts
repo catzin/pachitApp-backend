@@ -13,6 +13,9 @@ import { MascotaImagen } from './mascota/entities/mascota-imagen.entity';
 import { OrganizacionController } from './organizacion/organizacion.controller';
 import { OrganizacionService } from './organizacion/organizacion.service';
 import { OrganizacionModule } from './organizacion/organizacion.module';
+import { FilesModule } from './files/files.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 
 
@@ -35,7 +38,12 @@ import { OrganizacionModule } from './organizacion/organizacion.module';
     // CatalogsModule,
     CommonModule,
     MascotaModule,
-    OrganizacionModule
+    OrganizacionModule,
+    MascotaImagen,
+    FilesModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname,'..','public'),
+      })
 
     ],
   controllers: [OrganizacionController],
