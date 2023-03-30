@@ -16,7 +16,6 @@ export class AuthController {
 
   constructor(private authService: AuthService){}
 
-
   
   @Post('register')
   registerUser(@Body() createUserDto: CreateUserDto){
@@ -28,7 +27,6 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  
   @Get('private')
   @UseGuards(AuthGuard())
   testingPrivateRoute(

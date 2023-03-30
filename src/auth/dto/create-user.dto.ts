@@ -19,6 +19,8 @@ export class CreateUserDto {
     @IsDateString()
     fechaRegistro: Date;
 
+
+
     @IsString()
     @IsEmail()
     correo: string;
