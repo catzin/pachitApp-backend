@@ -2,6 +2,24 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColum
 import { MascotaImagen } from './mascota-imagen.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 
+enum NivelActividad {
+  BAJO = 'BAJO',
+  MEDIO = 'MEDIO',
+  ALTO = 'ALTO',
+}
+
+enum TipoMascota {
+  PERRO = 'PERRO',
+  GATO = 'GATO',
+  OTRO = 'OTRO',
+}
+
+enum TipoRaza {
+  RAZA_1 = 'RAZA_1',
+  RAZA_2 = 'RAZA_2',
+  RAZA_3 = 'RAZA_3',
+}
+
 @Entity("mascota")
 export class Mascota {
   @PrimaryGeneratedColumn()
@@ -16,8 +34,23 @@ export class Mascota {
   @Column()
   edad: number;
 
-  @Column({ length: 45 })
-  nivelActividad: string;
+  @Column({
+    type: 'enum',
+    enum: TipoRaza,
+  })
+  tipoRaza: TipoRaza;
+  
+  @Column({
+    type: 'enum',
+    enum: NivelActividad,
+  })
+  nivelActividad: NivelActividad;
+  
+  @Column({
+    type: 'enum',
+    enum: TipoMascota,
+  })
+  tipoMascota: TipoMascota;
 
   @Column()
   estatus: number;

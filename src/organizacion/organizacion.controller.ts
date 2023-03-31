@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query, SetMetadata, UseGuards } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { OrganizacionService } from './organizacion.service';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
 import { UpdateMascotaDto } from './dto/update-mascota.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 
 @Controller('organizacion')
 export class OrganizacionController {
