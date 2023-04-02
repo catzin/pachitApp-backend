@@ -11,7 +11,7 @@ export class MascotaImagen{
 
     @ManyToOne(
         () => Mascota,
-        (mascota) =>mascota.images,
+        (mascota) => mascota.images,
         {onDelete: 'CASCADE'}
 
     )

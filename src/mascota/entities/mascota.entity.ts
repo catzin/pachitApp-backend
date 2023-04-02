@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
 import { MascotaImagen } from './mascota-imagen.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
+import { Caracteristica } from './caracteristica.entity';
 
 enum NivelActividad {
   BAJO = 'BAJO',
@@ -70,6 +71,12 @@ export class Mascota {
   @ManyToOne(() => Organizacion)
   @JoinColumn({ name: 'id_organizacion' })
   organizacion: Organizacion;
-  
+
+  @ManyToMany(() => Caracteristica)
+  @JoinTable({
+    name:'caracteristicas'
+  })
+  caracteristicas: Caracteristica[];
+
 
 }

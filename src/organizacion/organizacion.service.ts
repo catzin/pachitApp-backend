@@ -42,8 +42,13 @@ export class OrganizacionService {
       
             const mascotas = this.mascotaRepository.find({
               take: limit,
-            skip: offset,
-            relations: ["images"]
+              skip: offset,
+              relations: {
+                images : true,
+                caracteristicas : true
+              }
+              
+            
               });
 
             return mascotas
