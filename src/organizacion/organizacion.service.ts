@@ -8,6 +8,7 @@ import { MascotaImagen } from '../mascota/entities/mascota-imagen.entity';
 import { isNumber, isUUID } from 'class-validator';
 import { UpdateMascotaDto } from './dto/update-mascota.dto';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
+import { Caracteristica } from '../mascota/entities/caracteristica.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -62,6 +63,9 @@ export class OrganizacionService {
         return this.mascotaRepository.find({
           take: limit,
           skip: offset,
+          relations:{
+            caracteristicas : true
+          },
           where: { organizacion: { idorganizacion } }
         });
       }
@@ -195,7 +199,7 @@ export class OrganizacionService {
         try {
             return await query 
             .delete()
-            .where({}) //no l mando ninguna condición es decir que seleccione todos los productos.
+            .where({}) //no l mando ninguna condición es decir que seleccione todos las mascotas.
             .execute();
 
         } catch (error) {

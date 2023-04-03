@@ -1,8 +1,11 @@
 import { IsNumber } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 //import { civilState } from '../../catalogs/entities/civil-state.entity';
 import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
 import { Peticion } from './peticion.entity';
+import { Caracteristica } from "src/mascota/entities/caracteristica.entity";
+import { TipoDocumento } from "src/files/entities/tipo-documento.entity";
+import { Imagenes } from "src/files/entities/imagenes.entity";
 
 @Entity("usuario")
 export class Usuario{
@@ -70,6 +73,20 @@ export class Usuario{
     peticion: Peticion;
 
 
+    @ManyToMany(() => TipoDocumento)
+    @JoinTable({
+      name:'documentacion'
+    })
+    documentacion: TipoDocumento[];
+  
     
+    @ManyToMany(() => Imagenes)
+    @JoinTable({
+      name:'documentacion'
+    })
+    documentacion1: Imagenes[];
+  
+
+
 
 }

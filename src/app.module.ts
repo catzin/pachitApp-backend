@@ -17,6 +17,8 @@ import { FilesModule } from './files/files.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { Caracteristica } from './mascota/entities/caracteristica.entity';
+import { TipoDocumento } from './files/entities/tipo-documento.entity';
+import { Imagenes } from './files/entities/imagenes.entity';
 
 
 
@@ -32,7 +34,7 @@ import { Caracteristica } from './mascota/entities/caracteristica.entity';
       database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica],
+      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes],
       synchronize: true,
     }),
     AuthModule,
