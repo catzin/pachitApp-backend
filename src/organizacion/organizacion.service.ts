@@ -9,6 +9,7 @@ import { isNumber, isUUID } from 'class-validator';
 import { UpdateMascotaDto } from './dto/update-mascota.dto';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from '../mascota/entities/caracteristica.entity';
+import { TipoMascota } from '../mascota/entities/tipo-mascota.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -18,6 +19,8 @@ export class OrganizacionService {
         private readonly organizacionRepository: Repository<Organizacion>,
         @InjectRepository(Mascota)
         private readonly mascotaRepository: Repository<Mascota>,
+        @InjectRepository(TipoMascota)
+        private readonly tipoMascotaRepository: Repository<TipoMascota>,
         @InjectRepository(MascotaImagen)
         private readonly mascotaImageRepository: Repository<MascotaImagen>,
         private readonly dataSource: DataSource
@@ -35,6 +38,33 @@ export class OrganizacionService {
           });
     }
 
+
+    async findAllMascotasByTipo(paginationDto: PaginationDto, tipoMascota: number) {
+
+        //limite que establecemos para paginacion
+        const {limit=10, offset=0} = paginationDto
+
+        const tipoMascotaa = await this.tipoMascotaRepository.findOne({
+            where:{
+            idtipoMascota: tipoMascota
+            },
+        });
+
+      return  await this.mascotaRepository.find({
+        take: limit,
+        skip: offset,
+        relations: {
+          caracteristicas: true,
+          tipoMascota_idtipoMascota:true
+        },
+        where: {
+            tipoMascota_idtipoMascota: tipoMascotaa,
+        },
+      });
+    }
+  
+
+
         //get all MASCOTAS
     findAllMascotas(paginationDto: PaginationDto) {
        
@@ -46,7 +76,8 @@ export class OrganizacionService {
               skip: offset,
               relations: {
                 images : true,
-                caracteristicas : true
+                caracteristicas : true,
+                tipoMascota_idtipoMascota:true
               }
               
             
@@ -54,6 +85,8 @@ export class OrganizacionService {
 
             return mascotas
     }
+
+    
 
 
     //VER MASCOTAS POR ORGANIZACION
@@ -111,10 +144,18 @@ export class OrganizacionService {
                     message: 'No se encuentra la organizacion'
                 };
             }
+
+            const tipoMascota = await this.tipoMascotaRepository.findOne({
+                where:{
+                idtipoMascota: createMascotaDto.idtipoMascota
+                },
+            });
+
             //Constante donde crea una mascota
             const newMascota = this.mascotaRepository.create({
                 ...mascotaDetails,
                 organizacion: organizacionFound,
+                tipoMascota_idtipoMascota: tipoMascota,
                 images: images.map( image => this.mascotaImageRepository.create({url:image}))
             });
              

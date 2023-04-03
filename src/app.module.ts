@@ -19,6 +19,7 @@ import { join } from 'path';
 import { Caracteristica } from './mascota/entities/caracteristica.entity';
 import { TipoDocumento } from './files/entities/tipo-documento.entity';
 import { Imagenes } from './files/entities/imagenes.entity';
+import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
 
 
 
@@ -34,7 +35,7 @@ import { Imagenes } from './files/entities/imagenes.entity';
       database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes],
+      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota],
       synchronize: true,
     }),
     AuthModule,
@@ -44,11 +45,12 @@ import { Imagenes } from './files/entities/imagenes.entity';
     OrganizacionModule,
     MascotaImagen,
     FilesModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..','public'),
-      })
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname,'..','public'),
+    //   })
 
-    ],
+    // ],
+  ],
   controllers: [OrganizacionController],
   providers: [OrganizacionService],
 })

@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColum
 import { MascotaImagen } from './mascota-imagen.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from './caracteristica.entity';
+import { Imagenes } from 'src/files/entities/imagenes.entity';
+import { TipoMascota } from './tipo-mascota.entity';
 
 enum NivelActividad {
   BAJO = 'BAJO',
@@ -9,11 +11,6 @@ enum NivelActividad {
   ALTO = 'ALTO',
 }
 
-enum TipoMascota {
-  PERRO = 'PERRO',
-  GATO = 'GATO',
-  OTRO = 'OTRO',
-}
 
 enum TipoRaza {
   RAZA_1 = 'RAZA_1',
@@ -35,11 +32,8 @@ export class Mascota {
   @Column()
   edad: number;
 
-  @Column({
-    type: 'enum',
-    enum: TipoRaza,
-  })
-  tipoRaza: TipoRaza;
+  @Column()
+  tipoRaza: string;
   
   @Column({
     type: 'enum',
@@ -47,11 +41,6 @@ export class Mascota {
   })
   nivelActividad: NivelActividad;
   
-  @Column({
-    type: 'enum',
-    enum: TipoMascota,
-  })
-  tipoMascota: TipoMascota;
 
   @Column()
   estatus: number;
@@ -77,6 +66,19 @@ export class Mascota {
     name:'caracteristicas'
   })
   caracteristicas: Caracteristica[];
+
+  @ManyToOne(() => TipoMascota, (tipoMascota) => tipoMascota.mascotas)
+  @JoinColumn({ name: 'idtipoMascota' })
+  tipoMascota_idtipoMascota: TipoMascota;
+
+
+  // @ManyToMany(() => Imagenes)
+  // @JoinTable({
+  //   name:'mascotaImg'
+  // })
+  // img: Imagenes[];
+
+
 
 
 }

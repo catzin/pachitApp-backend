@@ -19,13 +19,25 @@ export class OrganizacionController {
       return this.organizacionService.findAllOrganicaciones(paginationDto);
     }
 
-    //Obtiene mascotas con un limit y offset
-    @Get('vertodasMascotas')
     // @SetMetadata('roles',[1,2])
     // @UseGuards(AuthGuard(), UserRoleGuard)
-    findAllMascotas(@Query() paginationDto:PaginationDto) {
+
+    //Obtiene mascotas con un limit y offset
+    @Get('vertodasMascotas')
+    findAllMascotas(
+    @Query() paginationDto:PaginationDto,
+    @Query('tipoMascota') tipoMascota?: number,
+    ) {
       return this.organizacionService.findAllMascotas(paginationDto);
     }    
+
+    @Get('vertodasMascotasByTipo')
+    findAllMascotasbyTipo(
+    @Query() paginationDto:PaginationDto,
+    @Query('tipoMascota') tipoMascota?: number,
+    ) {
+      return this.organizacionService.findAllMascotasByTipo(paginationDto,tipoMascota);
+    }   
 
     //Obtiene todas las mascotas de la organización
     @Get(':idorganizacion/mascotas-organizacion')

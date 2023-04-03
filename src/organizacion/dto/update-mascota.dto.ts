@@ -28,8 +28,8 @@ export class UpdateMascotaDto {
     sexo?: string;
   
     @IsOptional()
-    @IsEnum(TipoMascota)
-    tipoMascota?: TipoMascota;
+    @IsString()
+    tipoMascota?: string;
   
     @IsOptional()
     @IsEnum(TipoRaza)

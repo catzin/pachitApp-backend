@@ -12,6 +12,5 @@ export enum NivelActividad {
   
 export enum TipoMascota {
     PERRO = 'PERRO',
-    GATO = 'GATO',
-    OTRO = 'OTRO',
+    GATO = 'GATO'
   }

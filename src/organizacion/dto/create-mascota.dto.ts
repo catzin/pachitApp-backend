@@ -6,11 +6,6 @@ enum NivelActividad {
   ALTO = 'ALTO',
 }
 
-enum TipoMascota {
-  PERRO = 'PERRO',
-  GATO = 'GATO',
-  OTRO = 'OTRO',
-}
 
 enum TipoRaza {
   RAZA_1 = 'RAZA_1',
@@ -32,6 +27,10 @@ export class CreateMascotaDto{
   edad: number;
 
   @IsNotEmpty()
+  @IsInt()
+  idtipoMascota: number;
+
+  @IsNotEmpty()
   @IsEnum(NivelActividad)
   nivelActividad: NivelActividad;
 
@@ -44,9 +43,6 @@ export class CreateMascotaDto{
   @IsEnum(['MACHO', 'HEMBRA'])
   sexo: string;
 
-  @IsNotEmpty()
-  @IsEnum(TipoMascota)
-  tipoMascota: TipoMascota;
 
   @IsNotEmpty()
   @IsEnum(TipoRaza)
