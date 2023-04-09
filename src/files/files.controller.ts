@@ -6,6 +6,7 @@ import { diskStorage } from 'multer';
 import { fileNamer } from './helpers/fileNamer.helper';
 import { createReadStream } from 'fs';
 import { ConfigService } from '@nestjs/config';
+import { CreateImagenDto } from './dto/create-imagen.dto';
 
 @Controller('files')
 export class FilesController {
@@ -37,7 +38,7 @@ export class FilesController {
   
  
  
-  @Post('mascota')
+  @Post('mascota/idMascota')
   @UseInterceptors(FileInterceptor('file', {
     fileFilter: fileFilter,
     //limits: {fileSize:1000}
@@ -48,6 +49,8 @@ export class FilesController {
   }))  
   uploadMascotaImage(
     @UploadedFile() file: Express.Multer.File,
+    @Param('idMascota') idMascota:number,
+    @Body() createImagenDto: CreateImagenDto
     ){
 
       if(!file){
@@ -55,9 +58,10 @@ export class FilesController {
       }
       
       const secureURL = `${this.configService.get('HOST_API')}/files/mascota/${file.filename}`;
-
+      const newImagen = this.filesService.createImagen(idMascota,createImagenDto)
     return {
       secureURL
     };
   }
+
 }

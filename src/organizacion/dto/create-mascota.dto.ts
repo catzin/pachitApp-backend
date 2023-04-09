@@ -1,4 +1,5 @@
 import { IsString, IsInt, IsNotEmpty, IsEnum, IsArray, IsOptional } from 'class-validator';
+import { Imagenes } from 'src/files/entities/imagenes.entity';
 
 enum NivelActividad {
   BAJO = 'BAJO',
@@ -52,4 +53,10 @@ export class CreateMascotaDto{
   @IsArray()
   @IsOptional()
   images?:string[];
+
+  @IsArray()
+  @IsOptional()
+  caracteristicas?: number[]; // array de ids de las características
+
+
 }

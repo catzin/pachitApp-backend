@@ -32,7 +32,7 @@ import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'pachiDBTest',
+      database: 'prueba2',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
       Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota],

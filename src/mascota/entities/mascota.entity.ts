@@ -72,11 +72,11 @@ export class Mascota {
   tipoMascota_idtipoMascota: TipoMascota;
 
 
-  // @ManyToMany(() => Imagenes)
-  // @JoinTable({
-  //   name:'mascotaImg'
-  // })
-  // img: Imagenes[];
+  @ManyToMany(() => Imagenes)
+  @JoinTable({
+    name:'mascotaImg'
+  })
+  mascotaImg: Imagenes[];
 
 
 

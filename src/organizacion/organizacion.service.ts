@@ -10,6 +10,7 @@ import { UpdateMascotaDto } from './dto/update-mascota.dto';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from '../mascota/entities/caracteristica.entity';
 import { TipoMascota } from '../mascota/entities/tipo-mascota.entity';
+import { Imagenes } from 'src/files/entities/imagenes.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -21,6 +22,10 @@ export class OrganizacionService {
         private readonly mascotaRepository: Repository<Mascota>,
         @InjectRepository(TipoMascota)
         private readonly tipoMascotaRepository: Repository<TipoMascota>,
+        @InjectRepository(Caracteristica)
+        private readonly caracteristicaRepository: Repository<Caracteristica>,
+        @InjectRepository(Imagenes)
+        private readonly imagenesRepository: Repository<Imagenes>,
         @InjectRepository(MascotaImagen)
         private readonly mascotaImageRepository: Repository<MascotaImagen>,
         private readonly dataSource: DataSource
@@ -151,12 +156,20 @@ export class OrganizacionService {
                 },
             });
 
+
+            const caracteristicas = await this.caracteristicaRepository.findByIds(
+                createMascotaDto.caracteristicas
+              );
+
+
+
             //Constante donde crea una mascota
             const newMascota = this.mascotaRepository.create({
                 ...mascotaDetails,
                 organizacion: organizacionFound,
                 tipoMascota_idtipoMascota: tipoMascota,
-                images: images.map( image => this.mascotaImageRepository.create({url:image}))
+                caracteristicas,            
+                images: images.map( image => this.mascotaImageRepository.create({url:image})),
             });
              
             await this.mascotaRepository.save(newMascota);
