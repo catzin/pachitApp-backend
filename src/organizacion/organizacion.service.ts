@@ -11,6 +11,7 @@ import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from '../mascota/entities/caracteristica.entity';
 import { TipoMascota } from '../mascota/entities/tipo-mascota.entity';
 import { Imagenes } from 'src/files/entities/imagenes.entity';
+import { TipoRaza } from 'src/mascota/entities/tipo-raza.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -22,6 +23,8 @@ export class OrganizacionService {
         private readonly mascotaRepository: Repository<Mascota>,
         @InjectRepository(TipoMascota)
         private readonly tipoMascotaRepository: Repository<TipoMascota>,
+        @InjectRepository(TipoRaza)
+        private readonly tipoRazaRepository: Repository<TipoRaza>,
         @InjectRepository(Caracteristica)
         private readonly caracteristicaRepository: Repository<Caracteristica>,
         @InjectRepository(Imagenes)
@@ -43,7 +46,7 @@ export class OrganizacionService {
           });
     }
 
-
+    //Obtiene todas las mascotas por TIPO - Catalogo 1
     async findAllMascotasByTipo(paginationDto: PaginationDto, tipoMascota: number) {
 
         //limite que establecemos para paginacion
@@ -67,7 +70,32 @@ export class OrganizacionService {
         },
       });
     }
-  
+
+     //Obtiene todas las mascotas por RAZA - Catalogo 2
+     async findAllMascotasByRaza(paginationDto: PaginationDto, tipoRaza: number) {
+
+        //limite que establecemos para paginacion
+        const {limit=10, offset=0} = paginationDto
+
+        const tipoRazaa = await this.tipoRazaRepository.findOne({
+            where:{
+            idtipoRaza: tipoRaza
+            },
+        });
+
+      return  await this.mascotaRepository.find({
+        take: limit,
+        skip: offset,
+        relations: {
+          caracteristicas: true,
+          tipoRaza_idtipoRaza:true
+        },
+        where: {
+            tipoRaza_idtipoRaza: tipoRazaa,
+        },
+      });
+    }   
+
 
 
         //get all MASCOTAS

@@ -31,6 +31,7 @@ export class OrganizacionController {
       return this.organizacionService.findAllMascotas(paginationDto);
     }    
 
+    //Obtiene mascotas por TIPO MASCOTA con un limit y offset -- Catalogo1
     @Get('vertodasMascotasByTipo')
     findAllMascotasbyTipo(
     @Query() paginationDto:PaginationDto,
@@ -38,6 +39,16 @@ export class OrganizacionController {
     ) {
       return this.organizacionService.findAllMascotasByTipo(paginationDto,tipoMascota);
     }   
+
+     //Obtiene mascotas por TIPO RAZA con un limit y offset -- Catalogo1
+     @Get('vertodasMascotasByRaza')
+     findAllMascotasbyRaza(
+     @Query() paginationDto:PaginationDto,
+     @Query('tipoRaza') tipoRaza?: number,
+     ) {
+       return this.organizacionService.findAllMascotasByRaza(paginationDto,tipoRaza);
+     }   
+    
 
     //Obtiene todas las mascotas de la organización
     @Get(':idorganizacion/mascotas-organizacion')

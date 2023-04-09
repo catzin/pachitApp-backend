@@ -20,6 +20,7 @@ import { Caracteristica } from './mascota/entities/caracteristica.entity';
 import { TipoDocumento } from './files/entities/tipo-documento.entity';
 import { Imagenes } from './files/entities/imagenes.entity';
 import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
+import { TipoRaza } from './mascota/entities/tipo-raza.entity';
 
 
 
@@ -35,7 +36,7 @@ import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
       database: 'prueba2',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota],
+      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza],
       synchronize: true,
     }),
     AuthModule,
