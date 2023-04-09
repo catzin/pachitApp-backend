@@ -3,16 +3,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { Usuario } from './user/entity/usuario.entity';
 import { AuthModule } from './auth/auth.module';
-import { CatalogsModule } from './catalogs/catalogs.module';
-import { civilState } from './catalogs/entities/civil-state.entity';
-import { Sex } from './catalogs/entities/sex.entity';
-import { UserType } from './catalogs/entities/user-type.entity';
-import { Ocupation } from './catalogs/entities/ocupation.entity';
-import { Residence } from './catalogs/entities';
-import { RelationShip } from './catalogs/entities/relationShip.entity';
-import { DocumentType } from './catalogs/entities/document-entity';
+
 import { CommonModule } from './common/common.module';
+import { Organizacion } from './organizacion/entitites/organizacion.entity';
+import { Peticion } from './user/entity/peticion.entity';
+import { MascotaModule } from './mascota/mascota.module';
+import { Mascota } from './mascota/entities/mascota.entity';
+import { MascotaImagen } from './mascota/entities/mascota-imagen.entity';
+import { OrganizacionController } from './organizacion/organizacion.controller';
+import { OrganizacionService } from './organizacion/organizacion.service';
 import { OrganizacionModule } from './organizacion/organizacion.module';
+import { FilesModule } from './files/files.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { Caracteristica } from './mascota/entities/caracteristica.entity';
+import { TipoDocumento } from './files/entities/tipo-documento.entity';
+import { Imagenes } from './files/entities/imagenes.entity';
+import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
 
 
 
@@ -25,16 +32,26 @@ import { OrganizacionModule } from './organizacion/organizacion.module';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'pachiDB',
-      entities: [Usuario,civilState,Sex,UserType,Ocupation,Residence,RelationShip,DocumentType],
-      synchronize: false,
+      database: 'prueba2',
+      entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
+      //DocumentType,
+      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota],
+      synchronize: true,
     }),
     AuthModule,
-    CatalogsModule,
+    // CatalogsModule,
     CommonModule,
-    OrganizacionModule
-    ],
-  controllers: [],
-  providers: [],
+    MascotaModule,
+    OrganizacionModule,
+    MascotaImagen,
+    FilesModule,
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname,'..','public'),
+    //   })
+
+    // ],
+  ],
+  controllers: [OrganizacionController],
+  providers: [OrganizacionService],
 })
 export class AppModule {}

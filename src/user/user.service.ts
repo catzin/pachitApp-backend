@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,6 +7,10 @@ import { Usuario } from './entity/usuario.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
 import { use } from 'passport';
+import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
+import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
+import { Peticion } from './entity/peticion.entity';
+import { CreatePeticionDto } from './dto/create-peticion.dto';
 
 @Injectable()
 export class UserService {
@@ -16,6 +20,10 @@ export class UserService {
   constructor(
     @InjectRepository(Usuario)
     private userRepository: Repository<Usuario>,
+    @InjectRepository(Organizacion)
+    private readonly organizacionRepository: Repository<Organizacion>,
+    @InjectRepository(Peticion)
+    private readonly peticionRepository: Repository<Peticion>
   ) {}
 
 
@@ -138,4 +146,122 @@ export class UserService {
       const result = await query.delete().execute();
       console.log(result.affected); // imprime el número de usuarios eliminados
     }
+
+    //CREA ORGANIZACION sin verificacion
+    async createOrganizacion(idusuario: string, organizacion:CreateOrganizacionDto){
+      try {
+        const validateStatus = await this.peticionRepository.findOne({
+          where: {
+            usuario: { idusuario },
+            estatus: true
+          }
+        });
+    
+        if(!validateStatus) {
+          return {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'Usuario aún no tiene permiso para ser organización',
+          };
+        }
+    
+        //Busca el id del usuario para ver si le puede asociar una organización
+        const userFound = await this.userRepository.findOne({
+          where:{
+            idusuario,
+          },
+        });
+    
+        if(!userFound) {
+          return {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'No se encuentra el usuario',
+        };
+        }
+    
+        const orgFound = await this.organizacionRepository.findOne({
+          where: {
+            usuario: userFound,
+          },
+        });
+    
+        if (orgFound) {
+          return {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'El usuario ya tiene una organización asociada',
+        };
+        }
+    
+        const newOrganizacion = this.organizacionRepository.create({
+          ...organizacion,
+          usuario: userFound,
+        });
+    
+        return this.organizacionRepository.save(newOrganizacion);
+      } catch (error) {
+        console.log(error); // Agrega este console.log()
+        return {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'Please check server logs',
+        };
+     }
+    }
+
+
+
+  // Manda peticion UpgradeOrganizacion
+  async upgradeOrganizacion(idusuario: string, peticion: CreatePeticionDto) {
+    
+    try {
+        const userFound = await this.userRepository.findOne({
+            where: {
+                idusuario,
+            },
+        });
+
+        if (!userFound) {
+          throw new NotFoundException('User not found');
+
+        }
+
+        const peticionFound = await this.peticionRepository.findOne({
+            where: {
+                usuario: userFound,
+            },
+        });
+
+        if (peticionFound) {
+            return {
+                status: HttpStatus.UNAUTHORIZED,
+                message: 'Los usuarios solo pueden tener una petición en proceso',
+            };
+        }
+
+        const newPeticion = this.peticionRepository.create({
+            ...peticion,
+            usuario: userFound,
+        });
+
+        return this.peticionRepository.save(newPeticion);
+    } catch (error) {
+      console.log(error); // Agrega este console.log()
+        return {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'Please check server logs',
+        };
+    }
+}
+
+
+
+
+   private handleDBErrors(error: any): never{
+    if(error.code == '23505')
+      throw new BadRequestException(error.detail);
+    
+    console.log(error);
+
+    throw new InternalServerErrorException('PLease check server logs');
+    
+  }
+
 }

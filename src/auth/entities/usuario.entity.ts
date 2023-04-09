@@ -1,5 +1,6 @@
-import { civilState } from "src/catalogs/entities";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+//import { civilState } from "src/catalogs/entities";
+import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('usuario')
 export class Usuario{
@@ -22,10 +23,9 @@ export class Usuario{
     @Column()
     fechaRegistro: Date;
 
-    @Column('text',
-    {unique:true}
-    )
-    correo: string; 
+
+    @Column({ type: 'text', length: 255, unique: true })
+    correo: string;
 
     @Column('text',{
         select:false
@@ -61,9 +61,11 @@ export class Usuario{
     })
     isactive: boolean;
 
-    @ManyToOne(() => civilState)
-    @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
-    estadoCivil: civilState;
+    // @ManyToOne(() => civilState)
+    // @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
+    // estadoCivil: civilState;
+
+
 
     @BeforeInsert()
     checkFieldsBeforeInsert(){

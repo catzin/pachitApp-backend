@@ -50,6 +50,4 @@ export class UpdateUserDto {
   @IsNumber()
   Tipodomicilio_idTipoDomicilio: number;
 
-  @IsBoolean()
-  isactive: boolean;
 }
