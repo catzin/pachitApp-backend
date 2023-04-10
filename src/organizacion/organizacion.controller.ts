@@ -49,7 +49,15 @@ export class OrganizacionController {
        return this.organizacionService.findAllMascotasByRaza(paginationDto,tipoRaza);
      }   
     
-
+     //Obtiene mascotas por NIVEL ACTIVIDAD con un limit y offset -- Catalogo1
+     @Get('vertodasMascotasByNivel')
+     findAllMascotasbyNivel(
+     @Query() paginationDto:PaginationDto,
+     @Query('nivelActividad') nivelActividad?: number,
+     ) {
+       return this.organizacionService.findAllMascotasByNivel(paginationDto,nivelActividad);
+     }   
+    
     //Obtiene todas las mascotas de la organización
     @Get(':idorganizacion/mascotas-organizacion')
     findAllMascotasxOrganizacion(

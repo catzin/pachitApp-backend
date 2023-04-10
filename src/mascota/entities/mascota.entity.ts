@@ -5,13 +5,7 @@ import { Caracteristica } from './caracteristica.entity';
 import { Imagenes } from 'src/files/entities/imagenes.entity';
 import { TipoMascota } from './tipo-mascota.entity';
 import { TipoRaza } from './tipo-raza.entity';
-
-enum NivelActividad {
-  BAJO = 'BAJO',
-  MEDIO = 'MEDIO',
-  ALTO = 'ALTO',
-}
-
+import { NivelActividad } from './nivel-actividad.entity';
 
 
 @Entity("mascota")
@@ -27,13 +21,6 @@ export class Mascota {
 
   @Column()
   edad: number;
-
-  @Column({
-    type: 'enum',
-    enum: NivelActividad,
-  })
-  nivelActividad: NivelActividad;
-  
 
   @Column()
   estatus: number;
@@ -68,6 +55,9 @@ export class Mascota {
   @JoinColumn({ name: 'idtipoRaza' })
   tipoRaza_idtipoRaza: TipoRaza;
 
+  @ManyToOne(() => NivelActividad, (nivelActividad) => nivelActividad.mascotas)
+  @JoinColumn({ name: 'idnivelActividad' })
+  nivelActividad_idnivelActividad: NivelActividad;
 
 
   @ManyToMany(() => Imagenes)

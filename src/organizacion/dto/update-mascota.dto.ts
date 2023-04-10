@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsInt, IsOptional, IsString } from "class-validator";
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { NivelActividad, TipoMascota, TipoRaza } from "src/common/enums/enums";
 
 export class UpdateMascotaDto {
@@ -13,10 +13,19 @@ export class UpdateMascotaDto {
     @IsOptional()
     @IsInt()
     edad?: number;
+
+    @IsNotEmpty()
+    @IsInt()
+    idnivelActividad?: number;
+
+    @IsNotEmpty()
+    @IsInt()
+    idtipoMascota?: number;
   
-    @IsOptional()
-    @IsEnum(NivelActividad)
-    nivelActividad?: NivelActividad;
+    @IsNotEmpty()
+    @IsInt()
+    idtipoRaza?: number;
+  
   
     @IsOptional()
     @IsInt()
@@ -26,14 +35,6 @@ export class UpdateMascotaDto {
     @IsString()
     @IsEnum(['MACHO', 'HEMBRA'])
     sexo?: string;
-  
-    @IsOptional()
-    @IsString()
-    tipoMascota?: string;
-  
-    @IsOptional()
-    @IsEnum(TipoRaza)
-    tipoRaza?: TipoRaza;
   
     @IsOptional()
     @IsString({ each: true })

@@ -12,6 +12,7 @@ import { Caracteristica } from '../mascota/entities/caracteristica.entity';
 import { TipoMascota } from '../mascota/entities/tipo-mascota.entity';
 import { Imagenes } from 'src/files/entities/imagenes.entity';
 import { TipoRaza } from 'src/mascota/entities/tipo-raza.entity';
+import { NivelActividad } from 'src/mascota/entities/nivel-actividad.entity';
 
 @Injectable()
 export class OrganizacionService {
@@ -25,6 +26,8 @@ export class OrganizacionService {
         private readonly tipoMascotaRepository: Repository<TipoMascota>,
         @InjectRepository(TipoRaza)
         private readonly tipoRazaRepository: Repository<TipoRaza>,
+        @InjectRepository(NivelActividad)
+        private readonly nivelActividadRepository: Repository<NivelActividad>,
         @InjectRepository(Caracteristica)
         private readonly caracteristicaRepository: Repository<Caracteristica>,
         @InjectRepository(Imagenes)
@@ -63,7 +66,9 @@ export class OrganizacionService {
         skip: offset,
         relations: {
           caracteristicas: true,
-          tipoMascota_idtipoMascota:true
+          tipoMascota_idtipoMascota:true,
+          nivelActividad_idnivelActividad: true
+
         },
         where: {
             tipoMascota_idtipoMascota: tipoMascotaa,
@@ -88,13 +93,41 @@ export class OrganizacionService {
         skip: offset,
         relations: {
           caracteristicas: true,
-          tipoRaza_idtipoRaza:true
+          tipoRaza_idtipoRaza:true,
+          nivelActividad_idnivelActividad: true
+
         },
         where: {
             tipoRaza_idtipoRaza: tipoRazaa,
         },
       });
-    }   
+    }  
+    
+     //Obtiene todas las mascotas por RAZA - Catalogo 2
+     async findAllMascotasByNivel(paginationDto: PaginationDto, nivelActividad: number) {
+
+        //limite que establecemos para paginacion
+        const {limit=10, offset=0} = paginationDto
+
+        const nivelActividadd = await this.nivelActividadRepository.findOne({
+            where:{
+                idnivelActividad: nivelActividad
+            },
+        });
+
+      return  await this.mascotaRepository.find({
+        take: limit,
+        skip: offset,
+        relations: {
+          caracteristicas: true,
+          tipoRaza_idtipoRaza:true,
+          nivelActividad_idnivelActividad: true
+        },
+        where: {
+            nivelActividad_idnivelActividad: nivelActividadd,
+        },
+      });
+    } 
 
 
 
@@ -110,7 +143,9 @@ export class OrganizacionService {
               relations: {
                 images : true,
                 caracteristicas : true,
-                tipoMascota_idtipoMascota:true
+                tipoMascota_idtipoMascota:true,
+                tipoRaza_idtipoRaza:true,
+                nivelActividad_idnivelActividad:true
               }
               
             
@@ -130,7 +165,10 @@ export class OrganizacionService {
           take: limit,
           skip: offset,
           relations:{
-            caracteristicas : true
+            caracteristicas : true,
+            tipoMascota_idtipoMascota:true,
+            tipoRaza_idtipoRaza:true,
+            nivelActividad_idnivelActividad:true
           },
           where: { organizacion: { idorganizacion } }
         });

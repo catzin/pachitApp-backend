@@ -1,12 +1,6 @@
 import { IsString, IsInt, IsNotEmpty, IsEnum, IsArray, IsOptional } from 'class-validator';
 import { Imagenes } from 'src/files/entities/imagenes.entity';
 
-enum NivelActividad {
-  BAJO = 'BAJO',
-  MEDIO = 'MEDIO',
-  ALTO = 'ALTO',
-}
-
 
 export class CreateMascotaDto{
   @IsNotEmpty()
@@ -29,10 +23,9 @@ export class CreateMascotaDto{
   @IsInt()
   idtipoRaza: number;
 
-
   @IsNotEmpty()
-  @IsEnum(NivelActividad)
-  nivelActividad: NivelActividad;
+  @IsInt()
+  idnivelActividad: number;
 
   @IsNotEmpty()
   @IsInt()
