@@ -7,5 +7,5 @@ export class Caracteristica{
 
     @Column({ length: 45 })
     nombre : string;
-
+    
 }

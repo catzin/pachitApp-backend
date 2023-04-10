@@ -6,6 +6,7 @@ import { Imagenes } from 'src/files/entities/imagenes.entity';
 import { TipoMascota } from './tipo-mascota.entity';
 import { TipoRaza } from './tipo-raza.entity';
 import { NivelActividad } from './nivel-actividad.entity';
+import { MascotaImagenn } from './mascotaImg.entity';
 
 
 @Entity("mascota")
@@ -31,7 +32,7 @@ export class Mascota {
   @OneToMany(
     () => MascotaImagen,
     (mascotaImagen) => mascotaImagen.mascota,
-    {cascade:true, eager:true}
+
 
   )
   images?: MascotaImagen[]
@@ -40,12 +41,6 @@ export class Mascota {
   @ManyToOne(() => Organizacion)
   @JoinColumn({ name: 'id_organizacion' })
   organizacion: Organizacion;
-
-  @ManyToMany(() => Caracteristica)
-  @JoinTable({
-    name:'caracteristicas'
-  })
-  caracteristicas: Caracteristica[];
 
   @ManyToOne(() => TipoMascota, (tipoMascota) => tipoMascota.mascotas)
   @JoinColumn({ name: 'idtipoMascota' })
@@ -59,14 +54,30 @@ export class Mascota {
   @JoinColumn({ name: 'idnivelActividad' })
   nivelActividad_idnivelActividad: NivelActividad;
 
-
-  @ManyToMany(() => Imagenes)
+  @ManyToMany(() => Caracteristica)
   @JoinTable({
-    name:'mascotaImg'
+    name:'caracteristicas'
   })
-  mascotaImg: Imagenes[];
+  caracteristicas: Caracteristica[];
 
 
+  // @ManyToMany(() => Imagenes)
+  // @JoinTable({
+  //   name:'mascotaImg'
+  // })
+  // mascotaImg: Imagenes[];
+
+
+  // @ManyToMany(() => Imagenes)
+  // @JoinTable({
+  //   name: 'mascotaImg',
+  // })
+  // imagenes: Imagenes[];
+
+  @OneToMany(() => MascotaImagenn, (mascotaImg) => mascotaImg.mascota,
+  {cascade:true, eager:true}
+  )
+  mascotaImgs: MascotaImagenn[];
 
 
 }

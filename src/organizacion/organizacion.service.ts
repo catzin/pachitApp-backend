@@ -136,26 +136,24 @@ export class OrganizacionService {
        
             //limite que establecemos para paginacion
             const {limit=10, offset=0} = paginationDto
-      
-            const mascotas = this.mascotaRepository.find({
-              take: limit,
-              skip: offset,
-              relations: {
-                images : true,
-                caracteristicas : true,
-                tipoMascota_idtipoMascota:true,
-                tipoRaza_idtipoRaza:true,
-                nivelActividad_idnivelActividad:true
-              }
-              
+
             
+            const mascotas = this.mascotaRepository.find({
+                take: limit,
+                skip: offset,
+                relations: {
+                  mascotaImgs: true,
+                  caracteristicas: true,
+                  tipoMascota_idtipoMascota: true,
+                  tipoRaza_idtipoRaza: true,
+                  nivelActividad_idnivelActividad: true
+                }
               });
 
             return mascotas
     }
 
     
-
 
     //VER MASCOTAS POR ORGANIZACION
     findMascotasbyOrganizacion(idorganizacion: string, paginationDto: PaginationDto) {
@@ -235,7 +233,8 @@ export class OrganizacionService {
                 organizacion: organizacionFound,
                 tipoMascota_idtipoMascota: tipoMascota,
                 caracteristicas,            
-                images: images.map( image => this.mascotaImageRepository.create({url:image})),
+                //images: images.map( image => this.mascotaImageRepository.create({url:image})),
+                
             });
              
             await this.mascotaRepository.save(newMascota);

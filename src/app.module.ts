@@ -22,6 +22,7 @@ import { Imagenes } from './files/entities/imagenes.entity';
 import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
 import { TipoRaza } from './mascota/entities/tipo-raza.entity';
 import { NivelActividad } from './mascota/entities/nivel-actividad.entity';
+import { MascotaImagenn } from './mascota/entities/mascotaImg.entity';
 
 
 
@@ -37,7 +38,7 @@ import { NivelActividad } from './mascota/entities/nivel-actividad.entity';
       database: 'prueba2',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad],
+      Organizacion,Peticion,Mascota,MascotaImagen,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,MascotaImagenn],
       synchronize: true,
     }),
     AuthModule,

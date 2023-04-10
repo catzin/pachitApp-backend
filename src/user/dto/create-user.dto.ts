@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsEmail, IsString, IsNumber, MinLength, IsBoolean } from 'class-validator';
+import { IsDate, IsEmail, IsString, IsNumber, MinLength, IsBoolean, IsDateString } from 'class-validator';
 import { Unique } from 'typeorm';
 
 
@@ -18,13 +18,11 @@ export class CreateUserDto {
   @IsString()
   apellidoMaterno: string;
 
-  @IsDate()
-  @Transform(({ value }) => new Date(value).toISOString().substring(0, 10), { toClassOnly: true })
-  fechaNacimiento: Date;
+  @IsDateString()
+  fechaNacimiento: string;
 
-  @IsDate()
-  @Transform(({ value }) => new Date(value).toISOString().substring(0, 10), { toClassOnly: true })
-  fechaRegistro: Date;
+  @IsDateString()
+  fechaRegistro: string;
 
   @IsEmail()
   correo: string;

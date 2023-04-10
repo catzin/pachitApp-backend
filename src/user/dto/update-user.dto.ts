@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsEmail, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsDate, IsDateString, IsEmail, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class UpdateUserDto {
 
@@ -12,13 +12,11 @@ export class UpdateUserDto {
   @IsString()
   apellidoMaterno: string;
 
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  fechaNacimiento: Date;
+  @IsDateString()
+  fechaNacimiento: string;
 
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  fechaRegistro: Date;
+  @IsDateString()
+  fechaRegistro: string;
 
   @IsEmail()
   correo: string;

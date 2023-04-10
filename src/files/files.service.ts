@@ -7,6 +7,7 @@ import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { Repository } from 'typeorm';
 import { Imagenes } from './entities/imagenes.entity';
+import { MascotaImagenn } from 'src/mascota/entities/mascotaImg.entity';
 
 @Injectable()
 export class FilesService {
@@ -18,7 +19,9 @@ export class FilesService {
         @InjectRepository(Mascota)
         private readonly mascotaRepository: Repository<Mascota>,
         @InjectRepository(Imagenes)
-        private readonly imagenesRepository: Repository<Imagenes>
+        private readonly imagenesRepository: Repository<Imagenes>,
+        @InjectRepository(MascotaImagenn)
+        private readonly mascotaImagennRepository: Repository<MascotaImagenn>
       ) {}
 
   
@@ -35,7 +38,7 @@ export class FilesService {
 
     }
 
-    async createImagen(idMascota:number,createImagenDto:CreateImagenDto){
+    async createImagen(idMascota:number,createImagenDto:CreateImagenDto,secureURL:string){
 
       //tema de imagenes
       const { ...imagenDetails} = createImagenDto;
@@ -50,15 +53,22 @@ export class FilesService {
 
         const newImagen = this.imagenesRepository.create({
             ...imagenDetails,
-        
+            path: secureURL,
+
         });
-         
-        await this.mascotaRepository.save(newImagen);
-        
 
+        await this.imagenesRepository.save(newImagen);
 
+        // crear instancia de MascotaImagenn
+        const mascotaImagen = this.mascotaImagennRepository.create({
+            mascota: mascotaFound,
+            imagen: newImagen,
+            path:secureURL
+        });
 
+        await this.mascotaImagennRepository.save(mascotaImagen);
 
+        return newImagen;
 
     }
 

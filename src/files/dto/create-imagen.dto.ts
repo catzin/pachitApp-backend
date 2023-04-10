@@ -1,12 +1,12 @@
-import { IsString, IsDate } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsDate, IsDateString } from 'class-validator';
+import moment from 'moment';
+
 
 export class CreateImagenDto{
   @IsString()
   nombre: string;
 
-  @IsString()
-  path: string;
-
-  @IsDate()
-  fechaSubida: Date;
+  @IsDateString()
+  fechaSubida: string;
 }

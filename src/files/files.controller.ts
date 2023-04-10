@@ -38,7 +38,7 @@ export class FilesController {
   
  
  
-  @Post('mascota/idMascota')
+  @Post('mascota/:idMascota')
   @UseInterceptors(FileInterceptor('file', {
     fileFilter: fileFilter,
     //limits: {fileSize:1000}
@@ -58,7 +58,7 @@ export class FilesController {
       }
       
       const secureURL = `${this.configService.get('HOST_API')}/files/mascota/${file.filename}`;
-      const newImagen = this.filesService.createImagen(idMascota,createImagenDto)
+      const newImagen = this.filesService.createImagen(idMascota,createImagenDto,secureURL)
     return {
       secureURL
     };
