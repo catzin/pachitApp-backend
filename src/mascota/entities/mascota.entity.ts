@@ -17,7 +17,7 @@ export class Mascota {
   @Column({ length: 45 })
   nombre: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 500 })
   descripcion: string;
 
   @Column()
