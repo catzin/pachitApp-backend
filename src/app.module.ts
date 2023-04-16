@@ -31,7 +31,7 @@ import { SolicitudAdopcion } from './mascota/entities/solicitud-adopcion.entity'
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'pachiDBTest',
+      database: 'pachiAdopcion',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
       Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion],
