@@ -30,7 +30,7 @@ import { MulterModule } from '@nestjs/platform-express';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'prueba2',
+      database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
       Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad],
