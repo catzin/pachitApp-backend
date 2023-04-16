@@ -22,6 +22,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { CreatePeticionDto } from './dto/create-peticion.dto';
+import { SolicitudAdopcion } from '../mascota/entities/solicitud-adopcion.entity';
+import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
   
   @Controller('user')
   export class UserController {
@@ -112,6 +114,20 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
       @Body('idPeticion') idPeticion: string
     ) {
       const result = await this.userService.verificaStatus(idPeticion);
+
+      return {
+        status: HttpStatus.OK,
+        accept: result
+      };
+
+
+    }
+
+    @Post('solicitudAdopcion')
+    async solicitudAdopcion(
+      @Body() createsolicitudAdopcionDto: CreateSolicitudAdopcionDto
+    ) {
+      const result = await this.userService.soliciutdAdopcion(createsolicitudAdopcionDto);
 
       return {
         status: HttpStatus.OK,
