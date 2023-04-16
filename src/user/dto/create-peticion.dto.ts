@@ -1,9 +1,15 @@
-import { IsString, IsDate, IsOptional, IsUUID } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsString} from 'class-validator';
 
 export class CreatePeticionDto{
 
-  
+    @IsString()
+    idusuario : string;
+    @IsString()
+    linkFacebook : string;
+    @IsString()
+    linkInstagram : string;
+    @IsString()
+    linkWeb : string;
     @IsString()
     motivo: string;
   

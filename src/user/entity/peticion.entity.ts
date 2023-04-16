@@ -9,8 +9,18 @@ export class Peticion{
     @PrimaryGeneratedColumn('uuid') 
     idPeticion:string;
 
-    @Column()
+    @Column({length : 600})
     motivo: string;
+
+    @Column({length: 150,default : ""})
+    linkFacebook: string;
+
+    @Column({length: 150,default : ""})
+    linkInstagram: string;
+
+    @Column({length: 150 ,default : ""})
+    linkWeb: string;
+
 
     @Column({ default: false })
     @IsBoolean()

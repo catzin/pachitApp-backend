@@ -65,12 +65,11 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
   
     //Crea organizacion
     // Funcion para desarrolladores: Crea una organizacion al usuario correspondietne
-    @Post(':idusuario/organizacion')
+    @Post('creaOrganizacion')
     async createOrganizacion(
-    @Param('idusuario') idusuario:string,
     @Body() createOrganizacionDto: CreateOrganizacionDto
     ){
-      const result= await this.userService.createOrganizacion(idusuario,createOrganizacionDto);
+      const result = await this.userService.createOrganizacion(createOrganizacionDto);
       if ('message' in result) {
         throw new InternalServerErrorException(result.message);
       } else if (!result) {
@@ -87,13 +86,11 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
 
 
     //Hace una peticion para ser organizacion
-
-    @Post(':idusuario/peticion')
+    @Post('peticion')
     async createPeticion(
-      @Param('idusuario') idusuario: string,
       @Body() createPeticionDto: CreatePeticionDto,
     ) {
-      const result = await this.userService.upgradeOrganizacion(idusuario, createPeticionDto);
+      const result = await this.userService.upgradeOrganizacion(createPeticionDto);
       if ('message' in result) {
         throw new InternalServerErrorException(result.message);
       } else if (!result) {
@@ -108,4 +105,19 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
       };
  
   }
+
+
+    @Post('verificarStatus')
+    async verificarStatus(
+      @Body('idPeticion') idPeticion: string
+    ) {
+      const result = await this.userService.verificaStatus(idPeticion);
+
+      return {
+        status: HttpStatus.OK,
+        accept: result
+      };
+
+
+    }
 }

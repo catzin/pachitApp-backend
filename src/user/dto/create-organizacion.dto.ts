@@ -1,24 +1,19 @@
-import { IsString, IsDate, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsDate, IsOptional, IsUUID, IsDateString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateOrganizacionDto{
 
-  
+    @IsString()
+    idusuario : string;
+
     @IsString()
     nombre: string;
   
     @IsString()
     descripcion: string;
   
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
+    @IsDateString()
     fechaCreacion: Date;
-  
-    @IsString()
-    linkInstagram: string;
-  
-    @IsString()
-    linkFacebook: string;
   
     @IsString()
     fotoPerfil: string;
@@ -32,11 +27,4 @@ export class CreateOrganizacionDto{
     @IsString()
     @IsOptional()
     linkDonacion?: string;
-
-    // @IsString()
-    // @IsUUID()
-    // usuario: number;
-  
-    // @IsString()
-    // usuario_idusuario: string;
 }

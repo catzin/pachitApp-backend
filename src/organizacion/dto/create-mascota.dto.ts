@@ -1,8 +1,8 @@
 import { IsString, IsInt, IsNotEmpty, IsEnum, IsArray, IsOptional } from 'class-validator';
-import { Imagenes } from 'src/files/entities/imagenes.entity';
 
 
 export class CreateMascotaDto{
+
   @IsNotEmpty()
   @IsString()
   nombre: string;
@@ -12,23 +12,23 @@ export class CreateMascotaDto{
   descripcion: string;
 
   @IsNotEmpty()
-  @IsInt()
+  //@IsInt()
   edad: number;
 
   @IsNotEmpty()
-  @IsInt()
+  //@IsInt()
   idtipoMascota: number;
 
   @IsNotEmpty()
-  @IsInt()
+  //@IsInt()
   idtipoRaza: number;
 
   @IsNotEmpty()
-  @IsInt()
+  //@IsInt()
   idnivelActividad: number;
 
   @IsNotEmpty()
-  @IsInt()
+  //@IsInt()
   estatus: number;
 
   @IsNotEmpty()
@@ -43,7 +43,7 @@ export class CreateMascotaDto{
   @IsOptional()
   images?:string[];
 
-  @IsArray()
+  //@IsArray()
   @IsOptional()
   caracteristicas?: number[]; // array de ids de las características
 

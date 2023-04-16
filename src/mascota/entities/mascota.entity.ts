@@ -1,12 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
-import { MascotaImagen } from './mascota-imagen.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from './caracteristica.entity';
-import { Imagenes } from 'src/files/entities/imagenes.entity';
 import { TipoMascota } from './tipo-mascota.entity';
 import { TipoRaza } from './tipo-raza.entity';
 import { NivelActividad } from './nivel-actividad.entity';
-import { MascotaImagenn } from './mascotaImg.entity';
+import { Imagenes } from 'src/mascota/entities/imagenes.entity';
+//import { MascotaImagenn } from './mascotaImg.entity';
 
 
 @Entity("mascota")
@@ -28,14 +27,6 @@ export class Mascota {
 
   @Column({ length: 45 })
   sexo: string;
-
-  @OneToMany(
-    () => MascotaImagen,
-    (mascotaImagen) => mascotaImagen.mascota,
-
-
-  )
-  images?: MascotaImagen[]
 
 
   @ManyToOne(() => Organizacion)
@@ -60,24 +51,23 @@ export class Mascota {
   })
   caracteristicas: Caracteristica[];
 
+  @ManyToMany(() => Imagenes,imagen =>imagen.mascotas, {cascade : true})
+  @JoinTable({
+    name:'mascota_imagen',
+    joinColumn:{
+      name:'mascota_id',
+      referencedColumnName:'id'
+    },
+    inverseJoinColumn:{
+      name:'imagen_id',
+      referencedColumnName:'id'
+    }
+  })
+  mascotaImgs: Imagenes[];
 
-  // @ManyToMany(() => Imagenes)
-  // @JoinTable({
-  //   name:'mascotaImg'
-  // })
-  // mascotaImg: Imagenes[];
 
 
-  // @ManyToMany(() => Imagenes)
-  // @JoinTable({
-  //   name: 'mascotaImg',
-  // })
-  // imagenes: Imagenes[];
 
-  @OneToMany(() => MascotaImagenn, (mascotaImg) => mascotaImg.mascota,
-  {cascade:true, eager:true}
-  )
-  mascotaImgs: MascotaImagenn[];
-
+ 
 
 }
