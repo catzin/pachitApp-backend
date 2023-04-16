@@ -5,7 +5,7 @@ import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
 import { Peticion } from './peticion.entity';
 import { Caracteristica } from "src/mascota/entities/caracteristica.entity";
 import { TipoDocumento } from "src/files/entities/tipo-documento.entity";
-import { Imagenes } from "src/files/entities/imagenes.entity";
+import { Imagenes } from "src/mascota/entities/imagenes.entity";
 
 @Entity("usuario")
 export class Usuario{

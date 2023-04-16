@@ -6,8 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { Repository } from 'typeorm';
-import { Imagenes } from './entities/imagenes.entity';
-import { MascotaImagenn } from 'src/mascota/entities/mascotaImg.entity';
+import { Imagenes } from '../mascota/entities/imagenes.entity';
+
 
 @Injectable()
 export class FilesService {
@@ -20,8 +20,7 @@ export class FilesService {
         private readonly mascotaRepository: Repository<Mascota>,
         @InjectRepository(Imagenes)
         private readonly imagenesRepository: Repository<Imagenes>,
-        @InjectRepository(MascotaImagenn)
-        private readonly mascotaImagennRepository: Repository<MascotaImagenn>
+ 
       ) {}
 
   
@@ -60,13 +59,13 @@ export class FilesService {
         await this.imagenesRepository.save(newImagen);
 
         // crear instancia de MascotaImagenn
-        const mascotaImagen = this.mascotaImagennRepository.create({
+        /*const mascotaImagen = this.mascotaImagennRepository.create({
             mascota: mascotaFound,
             imagen: newImagen,
             path:secureURL
-        });
+        });*/
 
-        await this.mascotaImagennRepository.save(mascotaImagen);
+        //await this.mascotaImagennRepository.save(mascotaImagen);
 
         return newImagen;
 

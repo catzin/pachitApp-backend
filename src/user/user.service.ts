@@ -148,16 +148,19 @@ export class UserService {
     }
 
     //CREA ORGANIZACION sin verificacion
-    async createOrganizacion(idusuario: string, organizacion:CreateOrganizacionDto){
+    async  createOrganizacion(organizacion:CreateOrganizacionDto){
       try {
-        const validateStatus = await this.peticionRepository.findOne({
-          where: {
-            usuario: { idusuario },
-            estatus: true
+        const {idusuario} = organizacion;
+        const [validateStatus] = await this.peticionRepository.find({
+          where:{
+            usuario: { idusuario : idusuario} 
           }
+         
         });
+
+     
     
-        if(!validateStatus) {
+        if(!validateStatus.estatus) {
           return {
             status: HttpStatus.UNAUTHORIZED,
             message: 'Usuario aún no tiene permiso para ser organización',
@@ -195,10 +198,16 @@ export class UserService {
           ...organizacion,
           usuario: userFound,
         });
+
+        newOrganizacion.linkFacebook = validateStatus.linkFacebook;
+        newOrganizacion.linkInstagram = validateStatus.linkInstagram;
+        newOrganizacion.linkWeb = validateStatus.linkWeb;
+
+        console.log(newOrganizacion);
     
         return this.organizacionRepository.save(newOrganizacion);
       } catch (error) {
-        console.log(error); // Agrega este console.log()
+  
         return {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             message: 'Please check server logs',
@@ -207,11 +216,34 @@ export class UserService {
     }
 
 
+    async verificaStatus(idPeticion : string){
+      try {
+        const result =  await this.peticionRepository.findOne({
+          where : {
+            idPeticion
+          }
+        });
+
+        const { estatus } = result; 
+
+        return estatus;
+
+      } catch (error) {
+        return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Por favor llama a un adulto',
+      };
+        
+      }
+    }
+
+
 
   // Manda peticion UpgradeOrganizacion
-  async upgradeOrganizacion(idusuario: string, peticion: CreatePeticionDto) {
+  async upgradeOrganizacion(peticion: CreatePeticionDto) {
     
     try {
+        const {idusuario} = peticion; 
         const userFound = await this.userRepository.findOne({
             where: {
                 idusuario,
@@ -243,7 +275,7 @@ export class UserService {
 
         return this.peticionRepository.save(newPeticion);
     } catch (error) {
-      console.log(error); // Agrega este console.log()
+      console.log(error);
         return {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             message: 'Please check server logs',
