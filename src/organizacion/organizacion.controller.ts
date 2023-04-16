@@ -13,10 +13,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const config: S3ClientConfig = {
-  region: "us-east-2",
+  region: process.env.BUCKET_REGION ,
   credentials: {
-    accessKeyId: "AKIA6HI3XIB32BIWOPNL",
-    secretAccessKey: "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",
+    accessKeyId: process.env.AWS_PUBLIC_KEY,
+    secretAccessKey: process.env.AWS_PRIVATE_KEY,
   },
 };
 const s3 = new S3Client(config);
