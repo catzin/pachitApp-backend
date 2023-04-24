@@ -20,10 +20,10 @@ import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 
 
 const config: S3ClientConfig = {
-  region: "us-east-2" ,
+  region: "" ,
   credentials: {
-    accessKeyId: "AKIA6HI3XIB33CEH5R2C",
-    secretAccessKey: "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",
+    accessKeyId: "",
+    secretAccessKey: "",
   },
 };
 const s3 = new S3Client(config);
