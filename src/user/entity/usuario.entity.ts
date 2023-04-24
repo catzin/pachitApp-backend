@@ -8,6 +8,8 @@ import { TipoDocumento } from "src/files/entities/tipo-documento.entity";
 import { Imagenes } from "src/mascota/entities/imagenes.entity";
 import { Mascota } from "src/mascota/entities/mascota.entity";
 import { SolicitudAdopcion } from "src/mascota/entities/solicitud-adopcion.entity";
+import { Ubicacion } from "./ubicacion.entity";
+import { HorarioContacto } from "./horario-contacto.entity";
 
 @Entity("usuario")
 export class Usuario{
@@ -73,6 +75,15 @@ export class Usuario{
     //Relaciones uno a uno
     @OneToOne(type => Peticion, peticion => peticion.usuario)
     peticion: Peticion;
+
+    
+    //Relaciones uno a uno
+    @OneToOne(type => Ubicacion, ubicacion => ubicacion.usuario)
+    ubicacion: Ubicacion;
+
+    //Relaciones uno a uno
+    @OneToOne(type => HorarioContacto, horariocontacto => horariocontacto.usuario)
+    horariocontacto: HorarioContacto;
 
 
     @ManyToMany(() => TipoDocumento)

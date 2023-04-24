@@ -9,14 +9,21 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import * as multerS3 from 'multer-s3';
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
+import { VerMascotasDto } from './dto/ver-mascotas.dto';
+import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 
+// BUCKET_REGION = 
+
+// AWS_PUBLIC_KEY = AKIA6HI3XIB33CEH5R2C
+
+// AWS_PRIVATE_KEY = 3/VWuTdlTiPScUfUCwOJz5n+y0lDDYjZULXIRpip
 
 
 const config: S3ClientConfig = {
-  region: process.env.BUCKET_REGION ,
+  region: "us-east-2" ,
   credentials: {
-    accessKeyId: process.env.AWS_PUBLIC_KEY,
-    secretAccessKey: process.env.AWS_PRIVATE_KEY,
+    accessKeyId: "AKIA6HI3XIB33CEH5R2C",
+    secretAccessKey: "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",
   },
 };
 const s3 = new S3Client(config);
@@ -36,6 +43,14 @@ export class OrganizacionController {
 
   // @SetMetadata('roles',[1,2])
   // @UseGuards(AuthGuard(), UserRoleGuard)
+
+    //Obtiene mascotas con un limit y offset
+    @Post('verEstatusMascotas')
+    verEstatusMascotas(
+      @Body() verMascotasDto: VerMascotasDto,
+    ) {
+      return this.organizacionService.verEstatusMascotas(verMascotasDto);
+    }
 
   //Obtiene mascotas con un limit y offset
   @Get('vertodasMascotas')
@@ -166,6 +181,28 @@ export class OrganizacionController {
       message: 'Mascota created successfully',
     };
   }
+  
+  //CREA UN RECORDATORIO 
+  @Post('creaRecordatorio')
+  async creaRecordatorio(
+    @Body() creaRecordatorio: CreateRecordatorioDto
+  ) {
+    const result = await this.organizacionService.creaRecordatorio(creaRecordatorio);
+
+      return {
+        status: HttpStatus.OK,
+        accept: result
+      };
+  }
+
+
+  @Get(':term/verRecordatorios')
+  verRecordatorios(
+  @Param('term') term: string) {
+    return this.organizacionService.finAllRecordatorios(term);
+  }
+
+
 
 
 

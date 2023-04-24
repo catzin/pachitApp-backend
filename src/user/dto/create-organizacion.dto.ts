@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsOptional, IsUUID, IsDateString } from 'class-validator';
+import { IsString, IsDate, IsOptional, IsUUID, IsDateString, IsNumber } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateOrganizacionDto{
@@ -13,7 +13,7 @@ export class CreateOrganizacionDto{
     descripcion: string;
   
     @IsDateString()
-    fechaCreacion: Date;
+    fechaCreacion: string;
   
     @IsString()
     fotoPerfil: string;
@@ -21,7 +21,7 @@ export class CreateOrganizacionDto{
     @IsString()
     fotoPortada: string;
   
-    @IsString()
+    @IsNumber()
     estatus: number;
   
     @IsString()
