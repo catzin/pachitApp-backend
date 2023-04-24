@@ -19,6 +19,9 @@ import { TipoRaza } from './mascota/entities/tipo-raza.entity';
 import { NivelActividad } from './mascota/entities/nivel-actividad.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { SolicitudAdopcion } from './mascota/entities/solicitud-adopcion.entity';
+import { Ubicacion } from './user/entity/ubicacion.entity';
+import { HorarioContacto } from './user/entity/horario-contacto.entity';
+import { Recordatorio } from './organizacion/entitites/recordatorio.entity';
 
 
 
@@ -27,14 +30,16 @@ import { SolicitudAdopcion } from './mascota/entities/solicitud-adopcion.entity'
     UserModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'pachidb.cmikwqtsgxlj.us-east-2.rds.amazonaws.com',
+      //host: 'pachidb.cmikwqtsgxlj.us-east-2.rds.amazonaws.com',
+      host: '127.0.0.1',
       port: 3306,
-      username: 'admin',
-      password: 'password',
-      database: 'pachiAdopcion',
+      username: 'root',
+      //password: 'password',
+      password: '1998',
+      database: 'pachidbtest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion],
+      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,Ubicacion,HorarioContacto,Recordatorio],
       synchronize: true,
     }),
     AuthModule,

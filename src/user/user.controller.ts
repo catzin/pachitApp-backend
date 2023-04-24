@@ -24,6 +24,7 @@ import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { CreatePeticionDto } from './dto/create-peticion.dto';
 import { SolicitudAdopcion } from '../mascota/entities/solicitud-adopcion.entity';
 import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
+import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
   
   @Controller('user')
   export class UserController {
@@ -51,10 +52,6 @@ import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
       return this.userService.remove(idusuario);
     } 
 
-    @Delete()
-    deleteUserEdoCivil1() {
-      return this.userService. deleteUsuariosWithSexoUno();
-    } 
 
    
   
@@ -136,4 +133,26 @@ import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
 
 
     }
+
+    @Post('creaUbicacion')
+    async creaUbicacion(
+      @Body() creaUbicacionDto: CreateUbicacionDto
+    ) {
+      const result = await this.userService.creaUbicacion(creaUbicacionDto);
+
+        return {
+          status: HttpStatus.OK,
+          accept: result
+        };
+    }
+
+
+    @Get(':term/verUsersUbicacion')
+    verUserUbicacion(
+    @Param('term') term: string) {
+      return this.userService.findOndeUserUbicacion(term);
+    }
+
+
+
 }

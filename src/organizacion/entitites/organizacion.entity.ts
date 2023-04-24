@@ -1,6 +1,8 @@
 import { Mascota } from 'src/mascota/entities/mascota.entity';
+import { Ubicacion } from 'src/user/entity/ubicacion.entity';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Recordatorio } from './recordatorio.entity';
 
 @Entity({ name: 'organizacion' })
 export class Organizacion{
@@ -13,7 +15,7 @@ export class Organizacion{
       @Column({ type: 'varchar', length: 150 })
       descripcion: string;
 
-      @Column({ type: 'date' })
+      @Column()
       fechaCreacion: Date;
 
       @Column({ type: 'varchar', length: 150, nullable: true })
@@ -47,6 +49,15 @@ export class Organizacion{
             (mascota) => mascota.organizacion
       )
       mascotas: Mascota[]
+
+
+      //Relaciones uno a uno
+    @OneToMany(
+             () => Recordatorio,
+            (recordatorio) => recordatorio.organizacion
+    )
+    recordatorio: Recordatorio[];
+
 
 
       

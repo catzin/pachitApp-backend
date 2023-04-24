@@ -8,12 +8,14 @@ import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Peticion } from './entity/peticion.entity';
 import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
+import { Ubicacion } from './entity/ubicacion.entity';
+import { HorarioContacto } from './entity/horario-contacto.entity';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService,TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion]),AuthModule],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto]),AuthModule],
   
 })
 export class UserModule {}

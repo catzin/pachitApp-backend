@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { DataSource, Equal, Repository } from 'typeorm';
@@ -12,6 +12,10 @@ import { TipoMascota } from '../mascota/entities/tipo-mascota.entity';
 import { Imagenes } from 'src/mascota/entities/imagenes.entity';
 import { TipoRaza } from 'src/mascota/entities/tipo-raza.entity';
 import { NivelActividad } from 'src/mascota/entities/nivel-actividad.entity';
+import { VerMascotasDto } from './dto/ver-mascotas.dto';
+import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
+import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
+import { Recordatorio } from './entitites/recordatorio.entity';
 
 
 @Injectable()
@@ -30,8 +34,12 @@ export class OrganizacionService {
         private readonly nivelActividadRepository: Repository<NivelActividad>,
         @InjectRepository(Caracteristica)
         private readonly caracteristicaRepository: Repository<Caracteristica>,
+        @InjectRepository(Recordatorio)
+        private readonly recordatorioRepository: Repository<Recordatorio>,
         @InjectRepository(Imagenes)
         private readonly imagenesRepository: Repository<Imagenes>,
+        @InjectRepository(SolicitudAdopcion)
+        private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
         private readonly dataSource: DataSource
     ) { }
 
@@ -350,6 +358,106 @@ export class OrganizacionService {
             };
         }
     }
+
+    async verEstatusMascotas(verMascotasDto:VerMascotasDto){
+ 
+    //Busca el id de la organizacion para ver si le puede asociar una mascota   
+        const organizacionFound = await this.organizacionRepository.findOne({
+            where: {
+                idorganizacion:verMascotasDto.organizacion
+            },
+        });
+
+    //Idea crear ottra constante que almacene algo tipo "newImagenMascota" 
+        if (!organizacionFound) {
+            return {
+                status: HttpStatus.UNAUTHORIZED,
+                message: 'No se encuentra la organizacion'
+            };
+        }
+        
+
+
+        const mascotas = this.mascotaRepository.find({
+            relations: {
+                solicitudAdopcion: {
+                    usuario: true
+                }
+            },
+            where: { 
+                organizacion: organizacionFound
+             }
+        });
+
+        
+
+        return mascotas;
+
+
+    }
+
+
+        //Crear recordatorio de la organizacion
+        async creaRecordatorio(recordatorio:CreateRecordatorioDto){
+
+            try {
+      
+              //Una vez encontrado el usuario
+              const organizacionFound = await this.organizacionRepository.findOne({
+                  where: {
+                      idorganizacion:recordatorio.organizacion_idorganizacion
+                  },
+              });
+      
+              if (!organizacionFound) {
+                throw new NotFoundException('Organizacion not found');
+      
+              }
+             
+      
+              const newRecordatorio = this.recordatorioRepository.create({
+                  ...recordatorio,
+                  organizacion: organizacionFound,
+              });
+      
+              return this.recordatorioRepository.save(newRecordatorio);
+      
+          } catch (error) {
+            console.log(error);
+              return {
+                  status: HttpStatus.INTERNAL_SERVER_ERROR,
+                  message: 'Please check server logs',
+              };
+          }
+          }
+      
+
+
+        //GET ALL RECORDATORIOS POR ORGANIZACION
+        async finAllRecordatorios(term:string) {       
+    
+            //aqui se hace la validacion para ver por donde busca
+            if( isUUID(term) ){
+    
+    
+                const organizacionFound = await this.organizacionRepository.findOne({
+                    where:{
+                    idorganizacion:term
+                    }
+            });
+    
+            const recordatoriosFound = await this.recordatorioRepository.find({
+                where : {
+                organizacion : organizacionFound
+                }
+            });
+    
+            return recordatoriosFound;
+    
+            }
+        
+        }  
+            
 
 }
 
