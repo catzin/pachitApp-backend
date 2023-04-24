@@ -5,6 +5,8 @@ import { TipoMascota } from './tipo-mascota.entity';
 import { TipoRaza } from './tipo-raza.entity';
 import { NivelActividad } from './nivel-actividad.entity';
 import { Imagenes } from 'src/mascota/entities/imagenes.entity';
+import { Usuario } from 'src/user/entity/usuario.entity';
+import { SolicitudAdopcion } from './solicitud-adopcion.entity';
 //import { MascotaImagenn } from './mascotaImg.entity';
 
 
@@ -66,8 +68,23 @@ export class Mascota {
   mascotaImgs: Imagenes[];
 
 
+  // @ManyToMany(() => Usuario,usuario =>usuario.mascotas, {cascade : true})
+  // @JoinTable({
+  //   name:'solicitud_adopcion',
+  //   joinColumn:{
+  //     name:'mascota_id',
+  //     referencedColumnName:'id'
+  //   },
+  //   inverseJoinColumn:{
+  //     name:'usuario_id',
+  //     referencedColumnName:'idusuario'
+  //   }
+  // })
+  // solicitudesAdopcion: Usuario[];
 
-
+  @OneToMany(() => SolicitudAdopcion, 
+  solicitudAdopcion => solicitudAdopcion.mascota)
+  solicitudAdopcion: SolicitudAdopcion[];
  
 
 }

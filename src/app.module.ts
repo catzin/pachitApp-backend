@@ -18,6 +18,7 @@ import { TipoMascota } from './mascota/entities/tipo-mascota.entity';
 import { TipoRaza } from './mascota/entities/tipo-raza.entity';
 import { NivelActividad } from './mascota/entities/nivel-actividad.entity';
 import { MulterModule } from '@nestjs/platform-express';
+import { SolicitudAdopcion } from './mascota/entities/solicitud-adopcion.entity';
 
 
 
@@ -33,7 +34,7 @@ import { MulterModule } from '@nestjs/platform-express';
       database: 'pachiDBTest',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad],
+      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion],
       synchronize: true,
     }),
     AuthModule,

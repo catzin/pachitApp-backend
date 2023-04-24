@@ -6,12 +6,13 @@ import { Caracteristica } from './entities/caracteristica.entity';
 import { TipoMascota } from './entities/tipo-mascota.entity';
 import { TipoRaza } from './entities/tipo-raza.entity';
 import { NivelActividad } from './entities/nivel-actividad.entity';
+import { SolicitudAdopcion } from './entities/solicitud-adopcion.entity';
 //import { MascotaImagenn } from './entities/mascotaImg.entity';
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad])],
-    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad])]
+    imports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion])],
+    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion])]
 
 
 })

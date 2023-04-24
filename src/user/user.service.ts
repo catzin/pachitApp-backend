@@ -11,6 +11,9 @@ import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { Peticion } from './entity/peticion.entity';
 import { CreatePeticionDto } from './dto/create-peticion.dto';
+import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
+import { Mascota } from 'src/mascota/entities/mascota.entity';
+import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 
 @Injectable()
 export class UserService {
@@ -23,7 +26,11 @@ export class UserService {
     @InjectRepository(Organizacion)
     private readonly organizacionRepository: Repository<Organizacion>,
     @InjectRepository(Peticion)
-    private readonly peticionRepository: Repository<Peticion>
+    private readonly peticionRepository: Repository<Peticion>,
+    @InjectRepository(Mascota)
+    private readonly mascotaRepository: Repository<Mascota>,
+    @InjectRepository(SolicitudAdopcion)
+    private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>
   ) {}
 
 
@@ -281,8 +288,72 @@ export class UserService {
             message: 'Please check server logs',
         };
     }
-}
+  }
 
+  //Solicita la adopcion de una mascota
+   async soliciutdAdopcion(solicitud:CreateSolicitudAdopcionDto){
+    try {
+
+      //Una vez encontrado el usuario
+      const userFound = await this.userRepository.findOne({
+          where: {
+              idusuario:solicitud.usuario
+          },
+      });
+
+      if (!userFound) {
+        throw new NotFoundException('User not found');
+
+      }
+
+      //Una vez encontrada la mascota
+      const mascotaFound = await this.mascotaRepository.findOne({
+          where: {
+              id: solicitud.mascota,
+          },
+      });
+
+      if (!mascotaFound) {
+          return {
+              status: HttpStatus.UNAUTHORIZED,
+              message: 'Mascota not found',
+          }; 
+      }
+
+      //Busca por una solicitud con ese usuario y estatus = 1(en proceso)
+      const solicitudFound = await this.solicitudAdopcionRepository.findOne({
+        where: {
+          usuario: userFound,
+          estatus: 1
+         },
+      })
+
+      //Verifica que no exista esa solicitud, ya que los usuarios solo pueden tener una solicitud en proceso.
+      if (solicitudFound) {
+        return {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'Los usuarios solo pueden tener una solicitud en proceso',
+        }; 
+      }
+
+
+      const newSolicitud = this.solicitudAdopcionRepository.create({
+          ...solicitud,
+          estatus:1,
+          usuario: userFound,
+          mascota:mascotaFound
+      });
+
+      return this.solicitudAdopcionRepository.save(newSolicitud);
+
+  } catch (error) {
+    console.log(error);
+      return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Please check server logs',
+      };
+  }
+   }
 
 
 
