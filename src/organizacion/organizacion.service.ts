@@ -71,12 +71,12 @@ export class OrganizacionService {
             take: limit,
             skip: offset,
             relations: {
-                //mascotaImgs: true,
+                mascotaImgs: true,
                 caracteristicas: true,
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true
-
+             
 
             },
             where: {
@@ -168,6 +168,7 @@ export class OrganizacionService {
             take: limit,
             skip: offset,
             relations: {
+                mascotaImgs: true,
                 caracteristicas: true,
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,

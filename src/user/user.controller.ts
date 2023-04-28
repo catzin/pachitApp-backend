@@ -12,6 +12,7 @@ import {
     Post,
     Query,
     SetMetadata,
+    UnauthorizedException,
     UseGuards,
   } from '@nestjs/common';
   import { CreateUserDto } from './dto/create-user.dto';
@@ -91,7 +92,7 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
     ) {
       const result = await this.userService.upgradeOrganizacion(createPeticionDto);
       if ('message' in result) {
-        throw new InternalServerErrorException(result.message);
+        throw new UnauthorizedException(result.message);
       } else if (!result) {
         return {
           status: HttpStatus.NOT_FOUND,
@@ -100,7 +101,8 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
       }
       return {
         status: HttpStatus.CREATED,
-        message: 'Peticion created successfully',
+        id : result.idPeticion,
+        message: 'Peticion creada satisfactoriamente',
       };
  
   }

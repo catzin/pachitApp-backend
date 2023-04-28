@@ -1,5 +1,5 @@
-import { IsString, IsDate, IsOptional, IsUUID, IsDateString, IsNumber } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsString, IsOptional,IsDateString, IsNumber } from 'class-validator';
+
 
 export class CreateOrganizacionDto{
 

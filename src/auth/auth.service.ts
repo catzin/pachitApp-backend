@@ -46,13 +46,14 @@ export class AuthService {
       await this.userRepository.save(user)
       delete user.contrasena;
 
-      const {nombre,apellidoPaterno,apellidoMaterno } = user;
+      const {nombre,apellidoPaterno,apellidoMaterno,idusuario } = user;
 
       return {
         nombre, 
         apellidoPaterno,
         apellidoMaterno,
         correo,
+        idusuario,
         token: this.getJwtToken({ idusuario: user.idusuario })
       };
 
@@ -83,13 +84,14 @@ export class AuthService {
     if (!bcrypt.compareSync(contrasena, user.contrasena))
       throw new UnauthorizedException('Not valid credentials');
 
-    const{nombre,apellidoPaterno,apellidoMaterno} = user;
+    const{nombre,apellidoPaterno,apellidoMaterno,idusuario} = user;
 
     return {
       nombre,
       apellidoPaterno,
       apellidoMaterno,
       correo,
+      idusuario,
       token: this.getJwtToken({ idusuario: user.idusuario })
     };
     //Retornar el jwt

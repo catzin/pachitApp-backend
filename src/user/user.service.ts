@@ -293,6 +293,8 @@ export class UserService {
         });
 
         if (!mascotaFound) {
+          
+           
             return {
                 status: HttpStatus.UNAUTHORIZED,
                 message: 'Mascota not found or Mascota not avaliable for adopt',

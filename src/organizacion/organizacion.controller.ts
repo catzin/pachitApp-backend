@@ -12,18 +12,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 
-// BUCKET_REGION = 
 
-// AWS_PUBLIC_KEY = AKIA6HI3XIB33CEH5R2C
-
-// AWS_PRIVATE_KEY = 3/VWuTdlTiPScUfUCwOJz5n+y0lDDYjZULXIRpip
 
 
 const config: S3ClientConfig = {
-  region: "" ,
+  region: process.env.BUCKET_REGION ,
   credentials: {
-    accessKeyId: "",
-    secretAccessKey: "",
+    accessKeyId: process.env.AWS_PUBLIC_KEY,
+    secretAccessKey:process.env.AWS_PRIVATE_KEY,
   },
 };
 const s3 = new S3Client(config);
@@ -89,7 +85,7 @@ export class OrganizacionController {
   }
 
   //Obtiene todas las mascotas de la organización
-  @Get(':idorganizacion/mascotas-organizacion')
+  @Get('mascotas-organizacion/:idorganizacion')
   findAllMascotasxOrganizacion(
     @Param('idorganizacion') idorganizacion: string,
     @Query() paginationDto: PaginationDto) {
@@ -132,7 +128,7 @@ export class OrganizacionController {
   @UseInterceptors(FilesInterceptor('fotos', 5, {
     storage: multerS3({
       s3: s3,
-      bucket: "pachistorage",
+      bucket: "pachistorages",
       acl: '',
       contentType: multerS3.AUTO_CONTENT_TYPE,
       metadata: (req, file, cb) => {
