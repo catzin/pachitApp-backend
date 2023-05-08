@@ -22,6 +22,7 @@ import { SolicitudAdopcion } from './mascota/entities/solicitud-adopcion.entity'
 import { Ubicacion } from './user/entity/ubicacion.entity';
 import { HorarioContacto } from './user/entity/horario-contacto.entity';
 import { Recordatorio } from './organizacion/entitites/recordatorio.entity';
+import { MascotaFavorita } from './mascota/entities/mascota-favorita.entity';
 
 
 
@@ -37,7 +38,7 @@ import { Recordatorio } from './organizacion/entitites/recordatorio.entity';
       database: 'pachiDB',
       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
       //DocumentType,
-      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,Ubicacion,HorarioContacto,Recordatorio],
+      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,Ubicacion,HorarioContacto,Recordatorio,MascotaFavorita],
       synchronize: true,
     }),
     AuthModule,
@@ -55,3 +56,36 @@ import { Recordatorio } from './organizacion/entitites/recordatorio.entity';
   providers: [OrganizacionService],
 })
 export class AppModule {}
+
+// @Module({
+//   imports: [
+//     UserModule,
+//     TypeOrmModule.forRoot({
+//       type: 'mysql',
+//       host: 'localhost',
+//       port: 3306,
+//       username: 'root',
+//       password: '1998',
+//       database: 'pachidbtest',
+//       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
+//       //DocumentType,
+//       Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,
+//       Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,
+//       Ubicacion,HorarioContacto,Recordatorio,MascotaFavorita],
+//       synchronize: true,
+//     }),
+//     AuthModule,
+//     // CatalogsModule,
+//     CommonModule,
+//     MascotaModule,
+//     OrganizacionModule,
+//     //MascotaImagen,
+//     MulterModule.register({
+//       dest: './public/mascotas'
+//     })
+
+//   ],
+//   controllers: [OrganizacionController],
+//   providers: [OrganizacionService],
+// })
+// export class AppModule {}

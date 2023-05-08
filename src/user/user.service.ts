@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getRepository } from 'typeorm';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository, getRepository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Usuario } from './entity/usuario.entity';
@@ -16,6 +16,8 @@ import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
 import { Ubicacion } from './entity/ubicacion.entity';
+import { CreateLikeDto } from './dto/create-like.dto';
+import { MascotaFavorita } from 'src/mascota/entities/mascota-favorita.entity';
 
 @Injectable()
 export class UserService {
@@ -23,6 +25,7 @@ export class UserService {
   private readonly logger = new Logger('UserService');
 
   constructor(
+    @InjectConnection() private connection: Connection,
     @InjectRepository(Usuario)
     private userRepository: Repository<Usuario>,
     @InjectRepository(Organizacion)
@@ -33,10 +36,13 @@ export class UserService {
     private readonly mascotaRepository: Repository<Mascota>,
     @InjectRepository(Ubicacion)
     private readonly ubicacionRepository: Repository<Ubicacion>,
+    @InjectRepository(MascotaFavorita)
+    private readonly mascotaFavoritaRepository: Repository<MascotaFavorita>,
     @InjectRepository(SolicitudAdopcion)
-    private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>
+    private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
   ) {}
 
+  
 
 
   async create(createUserDto: CreateUserDto) {
@@ -293,8 +299,6 @@ export class UserService {
         });
 
         if (!mascotaFound) {
-          
-           
             return {
                 status: HttpStatus.UNAUTHORIZED,
                 message: 'Mascota not found or Mascota not avaliable for adopt',
@@ -413,8 +417,113 @@ export class UserService {
       }
     
     }  
+
+
+    //Da like a mascota
+    async likeMascota(likeDto:CreateLikeDto){
+      try {
+
+        //Una vez encontrado el usuario
+        const userFound = await this.userRepository.findOne({
+            where: {
+                idusuario:likeDto.usuario
+            },
+        });
+
+        if (!userFound) {
+          throw new NotFoundException('User not found');
+
+        }
+
+        //Una vez encontrada la mascota que esta en adopcion
+        const mascotaFound = await this.mascotaRepository.findOne({
+          where: {
+              id: likeDto.mascota,
+              estatus:1
+          },
+      });
+
+      if (!mascotaFound) {
+          return {
+              status: HttpStatus.UNAUTHORIZED,
+              message: 'Mascota not found or Mascota not avaliable for adopt',
+          }; 
+      }
+
+
+        
+        const mascotaFavoritaFound = await this.mascotaFavoritaRepository.findOne({
+          where: {
+            usuario: userFound,
+            mascota: mascotaFound
+          },
+        })
+
+        //Verifica que no exista esa solicitud, ya que los usuarios solo pueden tener una solicitud en proceso.
+        if (mascotaFavoritaFound) {
+          return {
+              status: HttpStatus.UNAUTHORIZED,
+              message: 'Los usuarios solo pueden dar like una vez a la mascota ',
+          }; 
+        }
+
+
+        const newLike = this.mascotaFavoritaRepository.create({
+            usuario: userFound,
+            mascota:mascotaFound
+        });
+
+        return this.mascotaFavoritaRepository.save(newLike);
+
+    } catch (error) {
+      console.log(error);
+        return {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'Please check server logs',
+        };
+    }
+    }
+
+    //Obtiene las mascotas favoritas del usuario
+    async findMascotasFavoritas(term:string) {       
+      
       
 
+      //aqui se hace la validacion para ver por donde busca
+      if( isUUID(term) ){
+
+
+        const userFound = await this.userRepository.findOne({
+          where:{
+            idusuario:term
+          }
+        });
+
+        const ubicacionFound = await this.ubicacionRepository.findOne({
+          where : {
+          usuario: userFound
+          }
+        });
+
+        return ubicacionFound;
+
+      }
+    
+    }  
+    
+    //Contar likes de cada mascota 
+    async contarMascotaFavorita(idMascota: number): Promise<number> {
+      const result = await this.connection.query(
+        `CALL sp_contarMascotaFavorita(${idMascota})`,
+      );
+      return result[0][0].cantidad;
+    }
+
+    //Mascota mas likeada
+    async mascotaMasLikeada(): Promise<any> {
+      const result = await this.connection.query('CALL sp_mascotaMasLikeada()');
+      return result[0][0];
+    }
 
 
 }

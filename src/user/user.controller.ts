@@ -26,6 +26,7 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
 import { SolicitudAdopcion } from '../mascota/entities/solicitud-adopcion.entity';
 import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
+import { CreateLikeDto } from './dto/create-like.dto';
   
   @Controller('user')
   export class UserController {
@@ -156,5 +157,28 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
     }
 
 
+  
+    @Post('likeMascota')
+    async likeMascota(
+      @Body() createLikeDto: CreateLikeDto
+    ) {
+      const result = await this.userService.likeMascota(createLikeDto);
+
+        return {
+          status: HttpStatus.OK,
+          accept: result
+        };
+    }
+
+    @Get('mascotaFAV/:id')
+    async contarMascotaFavorita(@Param('id') idMascota: string): Promise<number> {
+      return this.userService.contarMascotaFavorita(Number(idMascota));
+    }
+
+    @Get('x/c')
+    async mascotaMasLikeada(): Promise<any> {
+      const masLikeada = await this.userService.mascotaMasLikeada();
+      return { masLikeada };
+    }
 
 }

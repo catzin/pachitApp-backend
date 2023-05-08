@@ -10,12 +10,13 @@ import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 import { Ubicacion } from './entity/ubicacion.entity';
 import { HorarioContacto } from './entity/horario-contacto.entity';
+import { MascotaFavorita } from 'src/mascota/entities/mascota-favorita.entity';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService,TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto]),AuthModule],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita]),AuthModule],
   
 })
 export class UserModule {}

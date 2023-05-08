@@ -10,6 +10,7 @@ import { Mascota } from "src/mascota/entities/mascota.entity";
 import { SolicitudAdopcion } from "src/mascota/entities/solicitud-adopcion.entity";
 import { Ubicacion } from "./ubicacion.entity";
 import { HorarioContacto } from "./horario-contacto.entity";
+import { MascotaFavorita } from "src/mascota/entities/mascota-favorita.entity";
 
 @Entity("usuario")
 export class Usuario{
@@ -100,25 +101,16 @@ export class Usuario{
     documentacion1: Imagenes[];
 
 
-    // @ManyToMany(() => Mascota , mascota => mascota.solicitudesAdopcion)
-    // @JoinTable({
-    //   name:'solicitud_adopcion',
-    //   joinColumn:{
-    //     name:'usuario_id',
-    //     referencedColumnName:'idusuario'
-    //   },
-    //   inverseJoinColumn:{
-    //     name:'mascota_id',
-    //     referencedColumnName:'id'
-    //   }
-    // })
-    // mascotas: Mascota[];
-  
-
     @OneToMany(() => SolicitudAdopcion, 
     solicitudAdopcion => solicitudAdopcion.usuario)
     solicitudAdopcion: SolicitudAdopcion[];
-   
+
+    @OneToMany(() => MascotaFavorita, 
+    mascotaFavorita => mascotaFavorita.usuario)
+    mascotaFavorita: MascotaFavorita[];
+
+
+
 
 
 
