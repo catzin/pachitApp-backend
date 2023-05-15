@@ -1,8 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe, UnauthorizedException } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, getRepository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {  InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import {  Connection, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Usuario } from './entity/usuario.entity';
@@ -511,8 +509,7 @@ export class UserService {
     }
     }
 
-    //Obtiene las mascotas favoritas del usuario
-    async findMascotasFavoritas(term:string) {       
+    
       
     async updateProfilePicture(file : Express.Multer.File, idUsuario : string ){
 
@@ -548,6 +545,8 @@ export class UserService {
     }
       
 
+        //Obtiene las mascotas favoritas del usuario
+        async findMascotasFavoritas(term:string) {   
       //aqui se hace la validacion para ver por donde busca
       if( isUUID(term) ){
 
