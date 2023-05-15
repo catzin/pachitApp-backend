@@ -14,17 +14,26 @@ export class CreateOrganizacionDto{
   
     @IsDateString()
     fechaCreacion: string;
-  
+   
+
+    @IsString()
+    linkDonacion?: string;
+
+
+    @IsOptional()
     @IsString()
     fotoPerfil: string;
-  
+
+    @IsOptional()
     @IsString()
     fotoPortada: string;
   
     @IsNumber()
+    @IsOptional()
     estatus: number;
   
-    @IsString()
+   
     @IsOptional()
-    linkDonacion?: string;
+    images?:string[];
+  
 }

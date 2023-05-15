@@ -36,16 +36,17 @@ export class CreateMascotaDto{
   @IsEnum(['MACHO', 'HEMBRA'])
   sexo: string;
 
-
+  //@IsArray()
+  @IsOptional()
+  caracteristicas?: number[]; // array de ids de las características
 
   @IsString({each:true})
   @IsArray()
   @IsOptional()
   images?:string[];
 
-  //@IsArray()
-  @IsOptional()
-  caracteristicas?: number[]; // array de ids de las características
+  @IsNotEmpty()
+  idOrganizacion : string
 
 
 }

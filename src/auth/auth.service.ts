@@ -54,7 +54,8 @@ export class AuthService {
         apellidoMaterno,
         correo,
         idusuario,
-        token: this.getJwtToken({ idusuario: user.idusuario })
+        token: this.getJwtToken({ idusuario: user.idusuario }),
+        tipoUsuarioIdTipoUsuario : 1,
       };
 
 
@@ -65,16 +66,16 @@ export class AuthService {
   }
 
 
+  
+
   async login(loginUserDto: LoginUserDto) {
-
-
 
     const { contrasena, correo } = loginUserDto; //Como extraer y trabajar con caractesticas del DTO
 
     const user = await this.userRepository.findOne({
 
       where: { correo },
-      select: { correo: true, contrasena: true, idusuario: true, nombre: true, apellidoMaterno: true, apellidoPaterno: true }
+      select: { correo: true, contrasena: true, idusuario: true, nombre: true, apellidoMaterno: true, apellidoPaterno: true , tipoUsuario_idTipoUsuario : true}
     });
 
 
@@ -84,15 +85,17 @@ export class AuthService {
     if (!bcrypt.compareSync(contrasena, user.contrasena))
       throw new UnauthorizedException('Not valid credentials');
 
-    const{nombre,apellidoPaterno,apellidoMaterno,idusuario} = user;
-
+    const{nombre,apellidoPaterno,apellidoMaterno,idusuario, tipoUsuario_idTipoUsuario} = user;
+    
     return {
       nombre,
       apellidoPaterno,
       apellidoMaterno,
       correo,
       idusuario,
-      token: this.getJwtToken({ idusuario: user.idusuario })
+      token: this.getJwtToken({ idusuario: user.idusuario }),
+      tipoUsuario_idTipoUsuario
+      
     };
     //Retornar el jwt
 

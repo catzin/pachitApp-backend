@@ -8,9 +8,7 @@ export class Residence{
     @PrimaryGeneratedColumn()
     idTipoDomicilio : number;
 
-    @Column('text',{
-        unique : true
-    })
+    @Column({ length: 40 })
     domicilio : string;
 
 

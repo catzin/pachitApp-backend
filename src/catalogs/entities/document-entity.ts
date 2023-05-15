@@ -7,9 +7,7 @@ export class DocumentType{
     @PrimaryGeneratedColumn()
     idTipoDocumento : number;
 
-    @Column('text',{
-        unique : true
-    })
+    @Column({ length: 90 })
     documento : string;
 
 

@@ -1,12 +1,11 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Usuario } from './entity/usuario.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
-import { use } from 'passport';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { Peticion } from './entity/peticion.entity';
@@ -16,6 +15,8 @@ import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
 import { Ubicacion } from './entity/ubicacion.entity';
+import { S3Service } from 'src/s3/s3.service';
+
 
 @Injectable()
 export class UserService {
@@ -34,10 +35,21 @@ export class UserService {
     @InjectRepository(Ubicacion)
     private readonly ubicacionRepository: Repository<Ubicacion>,
     @InjectRepository(SolicitudAdopcion)
-    private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>
+    private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
+    private s3Service : S3Service
   ) {}
 
 
+  async getUserType(idUsuario : string){
+    const user = await this.userRepository.findOne({
+      where: { idusuario : idUsuario },
+      select : {tipoUsuario_idTipoUsuario : true}
+     
+    });
+
+    return user;
+
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -67,33 +79,31 @@ export class UserService {
 
 
     //getbyId
+
     async findOne(term: string) {
+        const user = await this.userRepository.find({
+          where : { idusuario : term},
+          relations:['sexo_idSexo','estadoCivil_idEstadoCivil','ocupacion_idOcupacion','tipoUsuario_idTipoUsuario','Tipodomicilio_idTipoDomicilio'],
+        })
 
-      let usuario: Usuario;
-
-      //aqui se hace la validacion para ver por donde busca
-      if( isUUID(term) ){
-        usuario = await this.userRepository.findOneBy({idusuario: term});
-      }else{
-        const queryBuilder = this.userRepository.createQueryBuilder();
-        usuario = await queryBuilder
-          .where('nombre = :nombre',{
-            nombre: term,
-          }).getOne();
-      }
-      
-      if(!usuario) 
-        throw new NotFoundException('El usuario no fue encontrado');
-      return usuario;
+        if(!user[0]){
+          throw new NotFoundException('El usuario no fue encontrado');
+        }
 
 
+        return {
+          status : HttpStatus.OK,
+          message : 'Success',
+          user: user
+        }
+       
     }
 
     //delete
     async remove(idusuario: string){
       const user = await this.findOne(idusuario);
 
-      await this.userRepository.remove(user);
+      //await this.userRepository.remove(user);
 
     } 
     
@@ -133,9 +143,12 @@ export class UserService {
     }
 
     //CREA ORGANIZACION sin verificacion
-    async  createOrganizacion(organizacion:CreateOrganizacionDto){
+    async  createOrganizacion(organizacion:CreateOrganizacionDto , fotos : any){
       try {
+
+        const { images = fotos} = organizacion;
         const {idusuario} = organizacion;
+     
         const [validateStatus] = await this.peticionRepository.find({
           where:{
             usuario: { idusuario : idusuario} 
@@ -143,14 +156,13 @@ export class UserService {
          
         });
 
-     
-    
         if(!validateStatus.estatus) {
           return {
             status: HttpStatus.UNAUTHORIZED,
-            message: 'Usuario aún no tiene permiso para ser organización',
+            message: 'Usuario aún no tiene permiso para crear una organización',
           };
         }
+       
     
         //Busca el id del usuario para ver si le puede asociar una organización
         const userFound = await this.userRepository.findOne({
@@ -163,7 +175,7 @@ export class UserService {
           return {
             status: HttpStatus.UNAUTHORIZED,
             message: 'No se encuentra el usuario',
-        };
+          };
         }
     
         const orgFound = await this.organizacionRepository.findOne({
@@ -171,12 +183,13 @@ export class UserService {
             usuario: userFound,
           },
         });
-    
+
         if (orgFound) {
           return {
             status: HttpStatus.UNAUTHORIZED,
-            message: 'El usuario ya tiene una organización asociada',
-        };
+            message: 'Ya tienes una organización asociada',
+          };
+          
         }
     
         const newOrganizacion = this.organizacionRepository.create({
@@ -187,12 +200,20 @@ export class UserService {
         newOrganizacion.linkFacebook = validateStatus.linkFacebook;
         newOrganizacion.linkInstagram = validateStatus.linkInstagram;
         newOrganizacion.linkWeb = validateStatus.linkWeb;
+        newOrganizacion.estatus = 1;
+        newOrganizacion.fotoPerfil = images[0].location;
+        newOrganizacion.fotoPortada = images[1].location;    
+        await this.peticionRepository.update({ idPeticion : validateStatus.idPeticion },{finalizada : true});
+        await this.userRepository.update({idusuario : idusuario},{tipoUsuario_idTipoUsuario : 2});
+        await this.organizacionRepository.save(newOrganizacion);
 
-        console.log(newOrganizacion);
-    
-        return this.organizacionRepository.save(newOrganizacion);
+        return {
+          status : HttpStatus.OK,
+          newOrganizacion
+        };
+
+        
       } catch (error) {
-  
         return {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             message: 'Please check server logs',
@@ -200,8 +221,8 @@ export class UserService {
      }
     }
 
-
     async verificaStatus(idPeticion : string){
+      
       try {
         const result =  await this.peticionRepository.findOne({
           where : {
@@ -209,9 +230,9 @@ export class UserService {
           }
         });
 
-        const { estatus } = result; 
+        const { estatus,finalizada } = result; 
 
-        return estatus;
+        return {estatus,finalizada};
 
       } catch (error) {
         return {
@@ -247,6 +268,7 @@ export class UserService {
           });
 
           if (peticionFound) {
+          
               return {
                   status: HttpStatus.UNAUTHORIZED,
                   message: 'Los usuarios solo pueden tener una petición en proceso',
@@ -256,6 +278,7 @@ export class UserService {
           const newPeticion = this.peticionRepository.create({
               ...peticion,
               usuario: userFound,
+              finalizada : false
           });
 
           return this.peticionRepository.save(newPeticion);
@@ -413,6 +436,40 @@ export class UserService {
       }
     
     }  
+
+
+    async updateProfilePicture(file : Express.Multer.File, idUsuario : string ){
+
+      const user = this.userRepository.findOneOrFail({
+        where : {idusuario : idUsuario},
+
+      })
+
+      if(!user){
+        throw new HttpException(
+          "ID no válido",
+          400
+        );
+      }
+
+
+      const key = `${file.fieldname}${Date.now()}.${file.originalname.split('.')[1]}`;
+      const imageUrl = await this.s3Service.uploadFile(file,key);
+      this.userRepository.update(
+        {idusuario : idUsuario},
+        {fotoPerfil : imageUrl}
+        
+      );
+
+      return {
+        status : HttpStatus.OK,
+        imageUrl
+      }
+
+
+
+
+    }
       
 
 

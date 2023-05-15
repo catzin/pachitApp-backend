@@ -27,9 +27,14 @@ import { civilState } from './catalogs/entities/civil-state.entity';
 import { Sex } from './catalogs/entities/sex.entity';
 import { UserType } from './catalogs/entities/user-type.entity';
 import { Ocupation } from './catalogs/entities/ocupation.entity';
-import { Residence } from './catalogs/entities';
+import { PetAge, Residence } from './catalogs/entities';
 import { RelationShip } from './catalogs/entities/relationShip.entity';
 import { DocumentType } from './catalogs/entities/document-entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TimeoutInterceptor } from './shared/timeout.interceptor';
+import { S3Service } from './s3/s3.service';
+import { S3Module } from './s3/s3.module';
+import { ConfigModule } from '@nestjs/config';
 
 
 
@@ -43,9 +48,9 @@ import { DocumentType } from './catalogs/entities/document-entity';
       username: 'admin',
       password: 'Holamundo11!',
       database: 'pachiDB',
-      entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
-      //DocumentType,
-      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,Ubicacion,HorarioContacto,Recordatorio],
+      entities: [Usuario,civilState,Sex,UserType,Ocupation,Residence,RelationShip,
+      DocumentType,
+      Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,Ubicacion,HorarioContacto,Recordatorio,PetAge],
       synchronize: true,
     }),
     AuthModule,
@@ -53,14 +58,19 @@ import { DocumentType } from './catalogs/entities/document-entity';
     CommonModule,
     MascotaModule,
     OrganizacionModule,
-    //MascotaImagen,
     MulterModule.register({
       dest: './public/mascotas'
-    })
+    }),
+    S3Module,
+    ConfigModule
 
   ],
   controllers: [OrganizacionController],
-  providers: [OrganizacionService],
+  providers: [
+    OrganizacionService,
+    S3Service,
+   
+  ],
      
 
 })

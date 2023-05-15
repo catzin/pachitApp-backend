@@ -1,14 +1,14 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({
-    name:'ocupacion'
+    name:'petEdad'
 })
-export class Ocupation {
+export class PetAge {
 
     @PrimaryGeneratedColumn()
-    idOcupacion : number;
+    idEdad : number;
 
     @Column({ length: 80 })
-    ocupacion : string;
+    descripcion : string;
 
 }

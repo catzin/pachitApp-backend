@@ -13,32 +13,17 @@ export class Ubicacion{
     codigoPostal: string;
   
     @Column({ length: 45 })
-    asentamiento: string;
-  
-    @Column({ length: 45 })
-    tipoAsentamiento: string;
-  
-    @Column({ length: 45 })
-    municipio: string;
-  
-    @Column({ length: 45 })
-    estado: string;
-  
-    @Column({ length: 45 })
-    ciudad: string;
-  
-    @Column({ length: 45 })
     colonia: string;
   
     @Column({ length: 45 })
     calle: string;
-  
-    @Column()
-    numExterior: number;
-  
+
     @Column({ length: 45 })
-    numInt: string;
-  
+    delegacion: string;
+
+    @Column({ length: 45 })
+    ciudad: string;
+    
     @Column({ length: 45 })
     latitud: string;
   

@@ -1,4 +1,4 @@
-import { IsString} from 'class-validator';
+import { IsOptional, IsString} from 'class-validator';
 
 export class CreatePeticionDto{
 
@@ -12,6 +12,5 @@ export class CreatePeticionDto{
     linkWeb : string;
     @IsString()
     motivo: string;
-  
 
 }

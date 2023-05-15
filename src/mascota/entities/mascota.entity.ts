@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { Caracteristica } from './caracteristica.entity';
 import { TipoMascota } from './tipo-mascota.entity';
@@ -7,6 +7,7 @@ import { NivelActividad } from './nivel-actividad.entity';
 import { Imagenes } from 'src/mascota/entities/imagenes.entity';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { SolicitudAdopcion } from './solicitud-adopcion.entity';
+import { PetAge } from 'src/catalogs/entities';
 //import { MascotaImagenn } from './mascotaImg.entity';
 
 
@@ -21,8 +22,9 @@ export class Mascota {
   @Column({ length: 500 })
   descripcion: string;
 
-  @Column()
-  edad: number;
+  @ManyToOne(() => PetAge)
+  @JoinColumn({name : 'edad'})
+  edad: PetAge;
 
   @Column()
   estatus: number;

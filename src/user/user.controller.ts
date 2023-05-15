@@ -1,31 +1,45 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    HttpStatus,
-    InternalServerErrorException,
-    Param,
-    ParseIntPipe,
-    ParseUUIDPipe,
-    Patch,
-    Post,
-    Query,
-    SetMetadata,
-    UnauthorizedException,
-    UseGuards,
-  } from '@nestjs/common';
-  import { CreateUserDto } from './dto/create-user.dto';
-  import { UpdateUserDto } from './dto/update-user.dto';
-  import { UserService } from './user.service';
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Request,
+  SetMetadata,
+  UnauthorizedException,
+  UploadedFile,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
 import { PaginationDto } from '../common/dto/pagination.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { CreatePeticionDto } from './dto/create-peticion.dto';
-import { SolicitudAdopcion } from '../mascota/entities/solicitud-adopcion.entity';
 import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
+import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { v4 as uuidv4 } from 'uuid';
+import * as multerS3 from 'multer-s3';
+
+const config: S3ClientConfig = {
+  region: 'us-east-1' ,
+  credentials: {
+    accessKeyId: 'AKIAY4JYBNID4IGQTBU7',
+    secretAccessKey:'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',
+  },
+};
+const s3 = new S3Client(config);
   
   @Controller('user')
   export class UserController {
@@ -38,9 +52,21 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
       return this.userService.findAll(paginationDto);
     }
 
-    @Get(':term')
-    findOne(@Param('term') term: string) {
-      return this.userService.findOne(term);
+    @Post('find')
+    async findOne(@Body('idUsuario') term: string) {
+
+      try{
+        const result = await this.userService.findOne(term);
+        return result;
+
+      }catch(error){
+        if (error instanceof HttpException) {
+          throw new HttpException(error.message, error.getStatus());
+        }
+        throw new HttpException('Error interno del servidor', 500);
+
+      }
+      
     }
   
     @Post()
@@ -53,35 +79,64 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
       return this.userService.remove(idusuario);
     } 
 
-
-   
-  
     @Patch(':idusuario')
     update(
     @Param('idusuario') idusuario: string,
     @Body() updateUserDto:UpdateUserDto){
       return this.userService.update(idusuario,updateUserDto);
     }
+
+
+    @Post('tipoUsuario')
+    
+    async findUserType(
+      @Body('idusuario') idusuario : string
+    ){
+      const result = await this.userService.getUserType(idusuario);
+      if(result){
+        return {
+          status : HttpStatus.OK,
+          result
+        }
+      }
+      else{
+        return {
+          status : HttpStatus.NOT_FOUND
+        }
+      }
+    }
+
   
     //Crea organizacion
     // Funcion para desarrolladores: Crea una organizacion al usuario correspondietne
     @Post('creaOrganizacion')
+    @UseInterceptors(FilesInterceptor('fotos', 2, {
+      storage: multerS3({
+        s3: s3,
+        bucket: "pachistorages",
+        acl: '',
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        metadata: (req, file, cb) => {
+          cb(null, { fieldName: file.fieldname });
+        },
+        key: (req, file, cb) => {
+          const ext = file.originalname.split('.').pop();
+          const filename = uuidv4();
+          cb(null, `${filename}.${ext}`);
+        },
+  
+      })
+    }
+  
+    ))
     async createOrganizacion(
-    @Body() createOrganizacionDto: CreateOrganizacionDto
+    @Body() createOrganizacionDto: CreateOrganizacionDto,
+    @UploadedFiles() fotos
     ){
-      const result = await this.userService.createOrganizacion(createOrganizacionDto);
-      if ('message' in result) {
-        throw new InternalServerErrorException(result.message);
-      } else if (!result) {
-        return {
-          status: HttpStatus.NOT_FOUND,
-          message: 'User not found',
-        };
-      }
-      return {
-        status: HttpStatus.CREATED,
-        message: 'Organizacion created successfully',
-      };
+  
+      const result = await this.userService.createOrganizacion(createOrganizacionDto, fotos);
+      return result;
+    
     }
 
 
@@ -116,7 +171,7 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
 
       return {
         status: HttpStatus.OK,
-        accept: result
+        result
       };
 
 
@@ -149,10 +204,28 @@ import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
     }
 
 
-    @Get(':term/verUsersUbicacion')
+    @Get('verUsersUbicacion/:term')
     verUserUbicacion(
     @Param('term') term: string) {
       return this.userService.findOndeUserUbicacion(term);
+    }
+
+
+    @UseInterceptors(FileInterceptor('file'))
+    @Post('profileimage')
+    async uploadProfilePicture(
+      @UploadedFile() file : Express.Multer.File,
+      @Body('idUsuario') id : string,
+      @Request() req
+
+
+    ){
+      try{
+        const result = await this.userService.updateProfilePicture(file , id);
+        return result;
+      }catch(e){
+        console.log(e);
+      }
     }
 
 

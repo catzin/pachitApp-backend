@@ -8,9 +8,7 @@ export class UserType{
     @PrimaryGeneratedColumn()
     idTipoUsuario : number;
 
-    @Column('text',{
-        unique : true
-    })
+    @Column({ length: 40 })
     usuario : string;
 
 }

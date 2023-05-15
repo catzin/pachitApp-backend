@@ -10,12 +10,13 @@ import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 import { Ubicacion } from './entity/ubicacion.entity';
 import { HorarioContacto } from './entity/horario-contacto.entity';
+import { S3Module } from 'src/s3/s3.module';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService,TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto]),AuthModule],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto]),AuthModule, S3Module],
   
 })
 export class UserModule {}

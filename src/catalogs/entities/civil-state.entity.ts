@@ -8,9 +8,7 @@ export class civilState{
     @PrimaryGeneratedColumn()
     idEstadoCivil : number;
 
-    @Column('text',{
-        unique : true
-    })
+    @Column({ length: 90 })
     estadoCivil : string;
 
 }

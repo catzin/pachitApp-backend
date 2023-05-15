@@ -1,6 +1,5 @@
-//import { civilState } from "src/catalogs/entities";
-import { Organizacion } from "src/organizacion/entitites/organizacion.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Ocupation, Residence, Sex, UserType, civilState } from "src/catalogs/entities";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn,OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('usuario')
 export class Usuario{
@@ -39,21 +38,26 @@ export class Usuario{
     linkFacebook: string; 
 
     @Column({unique:true})
-    linkInstagram: string; 
-
-    @Column()
+    linkInstagram: string;
+    
+    @OneToOne(() => civilState)
+    @JoinColumn({name : 'estadoCivil_idEstadoCivil'})
     estadoCivil_idEstadoCivil: number;
 
-    @Column()
+    @OneToOne(() => Sex)
+    @JoinColumn({name : 'sexo_idSexo'})
     sexo_idSexo: number; 
 
-    @Column()
+    @OneToOne(() => Ocupation)
+    @JoinColumn({name : 'ocupacion_idOcupacion'})
     ocupacion_idOcupacion: number; 
 
-    @Column()
+    @OneToOne(() => UserType)
+    @JoinColumn({name : 'tipoUsuario_idTipoUsuario'})
     tipoUsuario_idTipoUsuario: number; 
     
-    @Column()
+    @OneToOne(() => Residence)
+    @JoinColumn({name : 'Tipodomicilio_idTipoDomicilio'})
     Tipodomicilio_idTipoDomicilio: number; 
 
     @Column('bool',{
@@ -61,16 +65,9 @@ export class Usuario{
     })
     isactive: boolean;
 
-    // @ManyToOne(() => civilState)
-    // @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
-    // estadoCivil: civilState;
-
-
-
     @BeforeInsert()
     checkFieldsBeforeInsert(){
-        this.correo = this.correo.toLocaleLowerCase().trim();
-        
+        this.correo = this.correo.toLocaleLowerCase().trim();  
     }
 
     @BeforeUpdate()
@@ -78,9 +75,5 @@ export class Usuario{
         this.checkFieldsBeforeInsert();
         
     }
-
-    // @OneToMany(() => Usuario, (usuario) => usuario.organizacion)
-    // usuarios: Usuario[];
-
 
 }

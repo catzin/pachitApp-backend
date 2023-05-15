@@ -6,9 +6,7 @@ export class Sex{
     @PrimaryGeneratedColumn()
     idSexo : number;
 
-    @Column('text',{
-        unique : true
-    })
+    @Column({ length: 30 })
     sexo : string;
 
 
