@@ -41,7 +41,9 @@ const config: S3ClientConfig = {
   },
 };
 const s3 = new S3Client(config);
+import { ApiTags } from '@nestjs/swagger';
   
+  @ApiTags('Usuario')
   @Controller('user')
   export class UserController {
     constructor(private userService: UserService) {}
@@ -70,7 +72,7 @@ const s3 = new S3Client(config);
       
     }
   
-    @Post()
+    @Post('register')
     store(@Body() createUserDto: CreateUserDto) {
       return this.userService.create(createUserDto);
     }

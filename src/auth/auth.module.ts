@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
     controllers: [AuthController],
@@ -25,7 +26,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
                 return{
                     secret: process.env.JWT_SECRET,
                     signOptions:{
-                    expiresIn:'2h'
+                    expiresIn:'null '
                     }
                 }
             }
@@ -33,7 +34,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
     ],
     exports: [TypeOrmModule,JwtStrategy, PassportModule, JwtModule],
-    providers: [AuthService,JwtStrategy]
+    providers: [AuthService,JwtStrategy,GoogleStrategy]
 })
 export class AuthModule {
 }

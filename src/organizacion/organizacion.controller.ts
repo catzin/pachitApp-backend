@@ -11,6 +11,7 @@ import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 
 
@@ -24,6 +25,7 @@ const config: S3ClientConfig = {
 };
 const s3 = new S3Client(config);
 
+@ApiTags('Organizacion')
 @Controller('organizacion')
 export class OrganizacionController {
 

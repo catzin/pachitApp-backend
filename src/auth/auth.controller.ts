@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Request, HttpException, HttpStatus, Get, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, HttpException, HttpStatus, Get, SetMetadata, Req, Res } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -7,6 +7,7 @@ import { CreateUserDto, LoginUserDto } from './dto';
 import { Usuario } from 'src/auth/entities/usuario.entity';
 import { RawHeaders, GetUser } from './decorators';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
+import { CreateUserGoogleDto } from './dto/create-user-google.dto';
 
 
 
@@ -66,6 +67,31 @@ export class AuthController {
       ok:true,
       user
     };
+  }
+
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googlelogin(){}
+
+  @Get('test123')
+  @UseGuards(AuthGuard('jwt'))
+  async test123(@Res() res){
+    res.json('success');
+
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async callback(
+  @Req() req, @Res() res)
+  //,@Body() createUserGoogleDto: CreateUserGoogleDto)
+  {
+    const jwt = await this.authService.loginGoogle(req.user);
+    
+    res.set('authorization', jwt.access_token);
+
+    res.json(req.user);
   }
 
 

@@ -4,6 +4,7 @@ import { Logger,ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 
 
@@ -24,6 +25,14 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('PachitApp')
+    .setDescription('Aplicación Nest.js para la adopción y gestion de mascotas.')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(3001);
   logger.log(`Server is running in ${await app.getUrl()}`);

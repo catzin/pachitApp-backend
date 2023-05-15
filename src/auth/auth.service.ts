@@ -3,10 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 
 import { CreateUserDto, LoginUserDto } from './dto';
 import { Repository } from 'typeorm';
-import { Usuario } from 'src/auth/entities/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { Usuario } from 'src/user/entity/usuario.entity';
+import { CreateUserGoogleDto } from './dto/create-user-google.dto';
 
 
 @Injectable()
@@ -117,6 +118,26 @@ export class AuthService {
     throw new InternalServerErrorException('PLease check server logs');
 
   }
+
+  //Login Google
+  async loginGoogle(user: any):Promise<any> {
+
+        if(user) {
+            return {
+                access_token: this.jwtService.sign({
+                    user: user.id, sub: 1
+                })
+            }
+        } else {
+            return {
+                access_token:''
+        }
+    }
+    }
+    
+    logout() {
+        
+    }
 
 
 

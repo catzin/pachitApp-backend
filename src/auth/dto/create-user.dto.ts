@@ -60,7 +60,7 @@ export class CreateUserDto {
     Tipodomicilio_idTipoDomicilio: number; 
 
     @IsBoolean()
-    isactive: boolean;
+    isactive?: boolean;
 
 
 }
