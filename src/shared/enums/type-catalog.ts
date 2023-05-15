@@ -5,5 +5,6 @@ export enum catalogType{
     USERS = 'usuarios',
     RESIDENCES = 'domicilios',
     RELATIONSHIP = 'parentesco',
-    DOCUMENTS = 'documentos'
+    DOCUMENTS = 'documentos',
+    PETAGE = 'perroEdad'
 }

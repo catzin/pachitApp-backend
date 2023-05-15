@@ -16,10 +16,10 @@ import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 
 
 const config: S3ClientConfig = {
-  region: process.env.BUCKET_REGION ,
+  region:'us-east-1',
   credentials: {
-    accessKeyId: process.env.AWS_PUBLIC_KEY,
-    secretAccessKey:process.env.AWS_PRIVATE_KEY,
+    accessKeyId:'AKIAY4JYBNID4IGQTBU7',
+    secretAccessKey:'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',
   },
 };
 const s3 = new S3Client(config);
@@ -28,6 +28,48 @@ const s3 = new S3Client(config);
 export class OrganizacionController {
 
   constructor(private organizacionService: OrganizacionService) { }
+
+
+  @Post('idOrganizacion')
+  async findIdByUser(@Body('userId') userId : string){
+    const id =  await this.organizacionService.searchIdOrg(userId); 
+
+    if(id){
+      return {
+        status : HttpStatus.OK,
+        idOrganizacion : id
+      }
+    }
+    else{
+      return{
+        status : HttpStatus.NOT_FOUND
+      }
+    }
+    
+    
+  }
+
+  @Get('tipoMascota')
+  findPetTypes(){
+    return this.organizacionService.findPetTypes();
+  }
+
+  @Get('raza')
+  findRazaTypes(){
+    return this.organizacionService.findRazaType();
+  }
+
+
+  @Get('caracteristicas')
+  findAllCaractertisticas(){
+    return this.organizacionService.GetCaracts();
+  }
+
+  @Get('nivelActividad')
+  fiindLevelActivity(){
+    return this.organizacionService.findActivityLevels();
+  }
+
 
   //Obtiene organizaciones con un limit y offset
   @Get('vertodasOrganizaciones')
@@ -116,16 +158,9 @@ export class OrganizacionController {
     this.organizacionService.deleteMascota(id);
   }
 
-  //Crea mascota
-  //multer local
-  /*storage : diskStorage({
-      destination: './public/mascotas',
-      filename: (req,file,cb) =>{
-        return cb(null, `${file.originalname}`);
-      }
-    }),*/
-  @Post('creaMascota/:idorganizacion')
-  @UseInterceptors(FilesInterceptor('fotos', 5, {
+
+  @Post('creaMascota')
+  @UseInterceptors(FilesInterceptor('fotos', 3, {
     storage: multerS3({
       s3: s3,
       bucket: "pachistorages",
@@ -145,8 +180,7 @@ export class OrganizacionController {
 
   ))
   async createMascota(
-    @Param('idorganizacion') idorganizacion: string,
-    @Body() createMascotaDto: CreateMascotaDto,
+    @Body() createMascotaDto:any,
     @UploadedFiles() fotos
   ): Promise<{ status: HttpStatus; message: string; }> {
 
@@ -159,11 +193,12 @@ export class OrganizacionController {
       idnivelActividad: Number(createMascotaDto.idnivelActividad),
       sexo: createMascotaDto.sexo,
       estatus: Number(createMascotaDto.estatus),
-      caracteristicas: createMascotaDto.caracteristicas.map((e) => Number(e))
+      caracteristicas:  createMascotaDto.caracteristicas,
+      idOrganizacion : createMascotaDto.idOrganizacion
 
     }
 
-    const result = await this.organizacionService.createMascota(idorganizacion, newPet, fotos);
+    const result = await this.organizacionService.createMascota(newPet, fotos);
     if ('message' in result) {
       throw new InternalServerErrorException(result.message);
     } else if (!result) {

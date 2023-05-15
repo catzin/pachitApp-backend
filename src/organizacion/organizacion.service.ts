@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { DataSource, Equal, Repository } from 'typeorm';
+import { DataSource, Equal, FindOneOptions, Repository } from 'typeorm';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
 import { Mascota } from 'src/mascota/entities/mascota.entity';
 import { isNumber, isUUID } from 'class-validator';
@@ -16,6 +16,7 @@ import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entity';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { Recordatorio } from './entitites/recordatorio.entity';
+import { PetAge } from 'src/catalogs/entities';
 
 
 @Injectable()
@@ -40,8 +41,31 @@ export class OrganizacionService {
         private readonly imagenesRepository: Repository<Imagenes>,
         @InjectRepository(SolicitudAdopcion)
         private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
-        private readonly dataSource: DataSource
+        private readonly dataSource: DataSource,
+        @InjectRepository(PetAge)
+        private readonly petAgeRepository : Repository<PetAge>
     ) { }
+
+
+    async GetCaracts(){
+       const caracters = await this.caracteristicaRepository.find();
+       return caracters;
+    }
+
+    async findRazaType(){
+        const raza = await this.tipoRazaRepository.find();
+        return raza;
+    }
+
+    async findPetTypes(){
+        const types = await this.tipoMascotaRepository.find();
+        return types;
+     }
+    
+    async findActivityLevels(){
+        const leves = await this.nivelActividadRepository.find();
+        return leves;
+    }
 
     //get all organizaciones
     findAllOrganicaciones(paginationDto: PaginationDto) {
@@ -75,7 +99,8 @@ export class OrganizacionService {
                 caracteristicas: true,
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
-                nivelActividad_idnivelActividad: true
+                nivelActividad_idnivelActividad: true,
+                edad : true
              
 
             },
@@ -103,7 +128,8 @@ export class OrganizacionService {
             relations: {
                 caracteristicas: true,
                 tipoRaza_idtipoRaza: true,
-                nivelActividad_idnivelActividad: true
+                nivelActividad_idnivelActividad: true,
+                edad : true
 
             },
             where: {
@@ -130,7 +156,8 @@ export class OrganizacionService {
             relations: {
                 caracteristicas: true,
                 tipoRaza_idtipoRaza: true,
-                nivelActividad_idnivelActividad: true
+                nivelActividad_idnivelActividad: true,
+                edad : true
             },
             where: {
                 nivelActividad_idnivelActividad: nivelActividadd,
@@ -153,7 +180,8 @@ export class OrganizacionService {
                 caracteristicas: true,
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
-                nivelActividad_idnivelActividad: true
+                nivelActividad_idnivelActividad: true,
+                edad : true
             }
         });
 
@@ -196,8 +224,21 @@ export class OrganizacionService {
         return mascota
     }
 
+    async searchIdOrg(idUsuario: string) {
+
+        const options: FindOneOptions<Organizacion> = {
+            where: { usuario: { idusuario: idUsuario } },
+            relations: ['usuario'],
+        };
+ 
+        const result = await this.organizacionRepository.findOne(options);
+
+        return result.idorganizacion;
+
+    }
+
     //Crea mascota
-    async createMascota(idorganizacion: string, createMascotaDto: CreateMascotaDto, files: any) {
+    async createMascota(createMascotaDto: CreateMascotaDto, files: any) {
         try {
 
             const { images = files, ...mascotaDetails } = createMascotaDto;
@@ -205,10 +246,11 @@ export class OrganizacionService {
             //Busca el id de la organizacion para ver si le puede asociar una mascota   
             const organizacionFound = await this.organizacionRepository.findOne({
                 where: {
-                    idorganizacion
+                    idorganizacion : createMascotaDto.idOrganizacion.toString()
+                  
                 },
             });
-
+      
             //Idea crear ottra constante que almacene algo tipo "newImagenMascota" 
             if (!organizacionFound) {
                 return {
@@ -233,6 +275,12 @@ export class OrganizacionService {
             const nivelAct = await this.nivelActividadRepository.findOne({
                 where: {
                     idnivelActividad: createMascotaDto.idnivelActividad
+                }
+            })
+
+            const edadCreate = await this.petAgeRepository.findOne({
+                where: {
+                    idEdad: createMascotaDto.edad
                 }
             })
 
@@ -264,7 +312,8 @@ export class OrganizacionService {
                 caracteristicas,
                 nivelActividad_idnivelActividad: nivelAct,
                 tipoRaza_idtipoRaza: tipoRaza,
-                mascotaImgs: imagenesFinal
+                mascotaImgs: imagenesFinal,
+                edad: edadCreate
 
             });
             await this.mascotaRepository.save(newMascota);
@@ -283,7 +332,7 @@ export class OrganizacionService {
     //UPDATE MASCOTA CON IMAGENES
     async updateMascota(id: number, updateMascotaDto: UpdateMascotaDto) {
 
-        const { images, ...mascotaDetails } = updateMascotaDto;
+        const { images, edad ,...mascotaDetails } = updateMascotaDto;
 
 
         const mascotafound = await this.mascotaRepository.findOne({

@@ -7,8 +7,6 @@ export class RelationShip {
     @PrimaryGeneratedColumn()
     idparentesco: number;
 
-    @Column('text', {
-        unique: true
-    })
+    @Column({ length: 80 })
     parentesco: string;
 }

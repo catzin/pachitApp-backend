@@ -7,6 +7,7 @@ import { ResidenceService } from './services/residence/residence.service';
 import { RelationshipService} from './services/relationship/relationship.service';
 import { CivilStateService } from './services/civil-state/civil-state.service';
 import { DocumentTypeService } from './services/document/document.service';
+import { PetAgeService } from './services/pet-age/pet-age.service';
 
 
 @Injectable()
@@ -28,6 +29,8 @@ export class CatalogsService {
     private readonly civilStateService : CivilStateService,
     @Inject(DocumentTypeService)
     private readonly documentService : DocumentTypeService,
+    @Inject(PetAgeService)
+    private readonly petAgeService : PetAgeService,
 
   ){}
   
@@ -44,6 +47,7 @@ export class CatalogsService {
         case catalogType.RESIDENCES : return this.residenceService.findAll();
         case catalogType.RELATIONSHIP : return this.relationShipService.findAll();
         case catalogType.DOCUMENTS : return this.documentService.findAll();
+        case catalogType.PETAGE : return this.petAgeService.findAll();
        
       }
 

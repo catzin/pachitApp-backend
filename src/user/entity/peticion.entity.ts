@@ -22,9 +22,13 @@ export class Peticion{
     linkWeb: string;
 
 
-    @Column({ default: false })
+    @Column()
     @IsBoolean()
     estatus: boolean;
+
+    @Column()
+    @IsBoolean()
+    finalizada: boolean;
 
 
     @OneToOne(type => Usuario, usuario => usuario.peticion)

@@ -16,12 +16,14 @@ import { RelationShip } from './entities/relationShip.entity';
 import { CivilStateService } from './services/civil-state/civil-state.service';
 import { DocumentTypeService } from './services/document/document.service';
 import { DocumentType } from './entities/document-entity';
+import { PetAgeService } from './services/pet-age/pet-age.service';
+import { PetAge } from './entities';
 
 @Module({
   controllers: [CatalogsController],
-  providers: [CatalogsService, SexService, UserTypeService, OcupationService, ResidenceService, RelationshipService, CivilStateService, DocumentTypeService],
+  providers: [CatalogsService, SexService, UserTypeService, OcupationService, ResidenceService, RelationshipService, CivilStateService, DocumentTypeService, PetAgeService],
   imports: [
-    TypeOrmModule.forFeature([civilState, Sex, UserType, Ocupation, Residence, RelationShip, DocumentType])
+    TypeOrmModule.forFeature([civilState, Sex, UserType, Ocupation, Residence, RelationShip, DocumentType, PetAge])
   ]
 })
 export class CatalogsModule { }

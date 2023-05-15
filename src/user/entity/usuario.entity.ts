@@ -11,6 +11,7 @@ import { SolicitudAdopcion } from "src/mascota/entities/solicitud-adopcion.entit
 import { Ubicacion } from "./ubicacion.entity";
 import { HorarioContacto } from "./horario-contacto.entity";
 import { MascotaFavorita } from "src/mascota/entities/mascota-favorita.entity";
+import { Ocupation, Residence, Sex, UserType, civilState } from "src/catalogs/entities";
 
 @Entity("usuario")
 export class Usuario{
@@ -51,19 +52,24 @@ export class Usuario{
     @Column()
     linkInstagram: string; 
 
-    @Column()
+    @OneToOne(() => civilState)
+    @JoinColumn({name : 'estadoCivil_idEstadoCivil'})
     estadoCivil_idEstadoCivil: number;
 
-    @Column()
+    @OneToOne(() => Sex)
+    @JoinColumn({name : 'sexo_idSexo'})
     sexo_idSexo: number; 
 
-    @Column()
+    @OneToOne(() => Ocupation)
+    @JoinColumn({name : 'ocupacion_idOcupacion'})
     ocupacion_idOcupacion: number; 
 
-    @Column()
+    @OneToOne(() => UserType)
+    @JoinColumn({name : 'tipoUsuario_idTipoUsuario'})
     tipoUsuario_idTipoUsuario: number; 
     
-    @Column()
+    @OneToOne(() => Residence)
+    @JoinColumn({name : 'Tipodomicilio_idTipoDomicilio'})
     Tipodomicilio_idTipoDomicilio: number; 
 
     @Column()
