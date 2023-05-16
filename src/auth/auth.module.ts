@@ -26,14 +26,14 @@ import { GoogleStrategy } from './strategies/google.strategy';
                 return{
                     secret: process.env.JWT_SECRET,
                     signOptions:{
-                    expiresIn:'null '
+                    expiresIn:'1d' 
                     }
                 }
             }
         })
 
     ],
-    exports: [TypeOrmModule,JwtStrategy, PassportModule, JwtModule],
+    exports: [TypeOrmModule,JwtStrategy, PassportModule, JwtModule,TypeOrmModule.forFeature([Usuario])],
     providers: [AuthService,JwtStrategy,GoogleStrategy]
 })
 export class AuthModule {

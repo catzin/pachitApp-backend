@@ -21,73 +21,70 @@ export class AuthService {
     // ,private userService: UserService,
     // private jwtService: JwtService,
   ) { }
-
+    
   async create(createUserDto: CreateUserDto) {
-
     try {
-
       const { correo, contrasena, ...userData } = createUserDto;
-
-
+  
       const existingUser = await this.userRepository.findOne({
         where: { correo },
         select: { correo: true },
       });
-
+  
       if (existingUser) {
         throw new BadRequestException('El correo ya está en uso');
       }
-
+  
       const user = this.userRepository.create({
         ...userData,
         contrasena: bcrypt.hashSync(contrasena, 10),
-        correo: correo
-
+        correo: correo,
       });
-      await this.userRepository.save(user)
+  
+      await this.userRepository.save(user);
       delete user.contrasena;
-
-      const {nombre,apellidoPaterno,apellidoMaterno,idusuario } = user;
-
+  
+      const { nombre, apellidoPaterno, apellidoMaterno, idusuario } = user;
+  
       return {
-        nombre, 
+        nombre,
         apellidoPaterno,
         apellidoMaterno,
         correo,
         idusuario,
-        token: this.getJwtToken({ idusuario: user.idusuario }),
-        tipoUsuarioIdTipoUsuario : 1,
+        tipoUsuarioIdTipoUsuario: 1,
       };
-
-
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
   }
-
-
   
-
   async login(loginUserDto: LoginUserDto) {
-
-    const { contrasena, correo } = loginUserDto; //Como extraer y trabajar con caractesticas del DTO
-
+    const { contrasena, correo } = loginUserDto;
+  
     const user = await this.userRepository.findOne({
-
       where: { correo },
-      select: { correo: true, contrasena: true, idusuario: true, nombre: true, apellidoMaterno: true, apellidoPaterno: true , tipoUsuario_idTipoUsuario : true}
+      select: {
+        correo: true,
+        contrasena: true,
+        idusuario: true,
+        nombre: true,
+        apellidoMaterno: true,
+        apellidoPaterno: true,
+        tipoUsuario_idTipoUsuario: true,
+      },
     });
-
-
-    if (!user)
-      throw new NotFoundException('User not found');
-
-    if (!bcrypt.compareSync(contrasena, user.contrasena))
-      throw new UnauthorizedException('Not valid credentials');
-
-    const{nombre,apellidoPaterno,apellidoMaterno,idusuario, tipoUsuario_idTipoUsuario} = user;
-    
+  
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+  
+    if (!bcrypt.compareSync(contrasena, user.contrasena)) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+  
+    const { nombre, apellidoPaterno, apellidoMaterno, idusuario, tipoUsuario_idTipoUsuario } = user;
+  
     return {
       nombre,
       apellidoPaterno,
@@ -95,18 +92,13 @@ export class AuthService {
       correo,
       idusuario,
       token: this.getJwtToken({ idusuario: user.idusuario }),
-      tipoUsuario_idTipoUsuario
-      
+      tipoUsuario_idTipoUsuario,
     };
-    //Retornar el jwt
-
   }
-
+  
   private getJwtToken(payload: JwtPayload) {
-
     const token = this.jwtService.sign(payload);
     return token;
-
   }
 
 

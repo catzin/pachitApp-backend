@@ -77,10 +77,10 @@ import { ApiTags } from '@nestjs/swagger';
       return this.userService.create(createUserDto);
     }
 
-    @Delete(':idusuario')
-    deleteUser(@Param('idusuario', ParseUUIDPipe) idusuario: string) {
-      return this.userService.remove(idusuario);
-    } 
+    // @Delete(':idusuario')
+    // deleteUser(@Param('idusuario', ParseUUIDPipe) idusuario: string) {
+    //   return this.userService.remove(idusuario);
+    // } 
 
     @Patch(':idusuario')
     update(
@@ -227,32 +227,32 @@ import { ApiTags } from '@nestjs/swagger';
         };
     }
 
-    @Get('mascotaFAV/:id')
-    async contarMascotaFavorita(@Param('id') idMascota: string): Promise<number> {
-      return this.userService.contarMascotaFavorita(Number(idMascota));
-    }
+    // @Get('mascotaFAV/:id')
+    // async contarMascotaFavorita(@Param('id') idMascota: string): Promise<number> {
+    //   return this.userService.contarMascotaFavorita(Number(idMascota));
+    // }
 
-    @Get('x/c')
-    async mascotaMasLikeada(): Promise<any> {
-      const masLikeada = await this.userService.mascotaMasLikeada();
-      return { masLikeada };
-    }
-    @UseInterceptors(FileInterceptor('file'))
-    @Post('profileimage')
-    async uploadProfilePicture(
-      @UploadedFile() file : Express.Multer.File,
-      @Body('idUsuario') id : string,
-      @Request() req
+    // @Get('x/c')
+    // async mascotaMasLikeada(): Promise<any> {
+    //   const masLikeada = await this.userService.mascotaMasLikeada();
+    //   return { masLikeada };
+    // }
+    // @UseInterceptors(FileInterceptor('file'))
+    // @Post('profileimage')
+    // async uploadProfilePicture(
+    //   @UploadedFile() file : Express.Multer.File,
+    //   @Body('idUsuario') id : string,
+    //   @Request() req
 
 
-    ){
-      try{
-        const result = await this.userService.updateProfilePicture(file , id);
-        return result;
-      }catch(e){
-        console.log(e);
-      }
-    }
+    // ){
+    //   try{
+    //     const result = await this.userService.updateProfilePicture(file , id);
+    //     return result;
+    //   }catch(e){
+    //     console.log(e);
+    //   }
+    // }
 
 
 

@@ -52,25 +52,25 @@ export class Usuario{
     @Column()
     linkInstagram: string; 
 
-    @OneToOne(() => civilState)
-    @JoinColumn({name : 'estadoCivil_idEstadoCivil'})
-    estadoCivil_idEstadoCivil: number;
+    @ManyToMany(() => civilState)
+    @JoinColumn({ name: 'estadoCivil_idEstadoCivil' })
+    estadoCivil: civilState;
 
-    @OneToOne(() => Sex)
-    @JoinColumn({name : 'sexo_idSexo'})
-    sexo_idSexo: number; 
+    @ManyToOne(() => Sex)
+    @JoinColumn({ name: 'sexo_idSexo' })
+    sexo: Sex;
 
-    @OneToOne(() => Ocupation)
-    @JoinColumn({name : 'ocupacion_idOcupacion'})
-    ocupacion_idOcupacion: number; 
+    @ManyToOne(() => Ocupation)
+    @JoinColumn({ name: 'ocupacion_idOcupacion' })
+    ocupacion: Ocupation;
 
-    @OneToOne(() => UserType)
+    @ManyToMany(() => UserType)
     @JoinColumn({name : 'tipoUsuario_idTipoUsuario'})
     tipoUsuario_idTipoUsuario: number; 
-    
-    @OneToOne(() => Residence)
-    @JoinColumn({name : 'Tipodomicilio_idTipoDomicilio'})
-    Tipodomicilio_idTipoDomicilio: number; 
+
+    @ManyToOne(() => Residence)
+    @JoinColumn({ name: 'Tipodomicilio_idTipoDomicilio' })
+    tipoDomicilio: Residence;
 
     @Column()
     isactive: boolean;

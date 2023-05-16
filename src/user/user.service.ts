@@ -108,12 +108,12 @@ export class UserService {
     }
 
     //delete
-    async remove(idusuario: string){
-      const user = await this.findOne(idusuario);
+    // async remove(idusuario: string){
+    //   const user = await this.findOne(idusuario);
 
-      //await this.userRepository.remove(user);
+    //   await this.userRepository.remove(user);
 
-    } 
+    // } 
     
 
     //Lo que hace es buscar todas las propiedas y hacer un update
@@ -569,19 +569,19 @@ export class UserService {
     
     }  
     
-    //Contar likes de cada mascota 
-    async contarMascotaFavorita(idMascota: number): Promise<number> {
-      const result = await this.connection.query(
-        `CALL sp_contarMascotaFavorita(${idMascota})`,
-      );
-      return result[0][0].cantidad;
-    }
+    // //Contar likes de cada mascota 
+    // async contarMascotaFavorita(idMascota: number): Promise<number> {
+    //   const result = await this.connection.query(
+    //     `CALL sp_contarMascotaFavorita(${idMascota})`,
+    //   );
+    //   return result[0][0].cantidad;
+    // }
 
-    //Mascota mas likeada
-    async mascotaMasLikeada(): Promise<any> {
-      const result = await this.connection.query('CALL sp_mascotaMasLikeada()');
-      return result[0][0];
-    }
+    // //Mascota mas likeada
+    // async mascotaMasLikeada(): Promise<any> {
+    //   const result = await this.connection.query('CALL sp_mascotaMasLikeada()');
+    //   return result[0][0];
+    // }
 
 
 }
