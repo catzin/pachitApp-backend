@@ -73,11 +73,11 @@ export class UserService {
   }
 
     //get all users
-    findAll(paginationDto: PaginationDto) {       
+    async findAll(paginationDto: PaginationDto) {       
       //limite que establecemos para paginacion
       const {limit=10, offset=0} = paginationDto
 
-      return this.userRepository.find({
+      return await this.userRepository.find({
         take: limit,
         skip: offset,
 

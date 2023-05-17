@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { Usuario } from 'src/auth/entities/usuario.entity';
+import { Usuario } from 'src/user/entity/usuario.entity';
 import { RawHeaders, GetUser } from './decorators';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
 

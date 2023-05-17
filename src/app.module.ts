@@ -74,7 +74,7 @@ import { ConfigModule } from '@nestjs/config';
         PetAge,
         MascotaFavorita
       ],
-      synchronize: true,
+      synchronize: false,
     }),
     
     AuthModule,

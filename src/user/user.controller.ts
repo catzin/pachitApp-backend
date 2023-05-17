@@ -33,11 +33,11 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
   export class UserController {
     constructor(private userService: UserService) {}
   
-    @Get()
+    @Get('test')
     // @SetMetadata('roles',[1,2])
     // @UseGuards(AuthGuard(), UserRoleGuard)
-    findAll(@Query() paginationDto:PaginationDto) {
-      return this.userService.findAll(paginationDto);
+    async findAll(@Query() paginationDto:PaginationDto) {
+      return await this.userService.findAll(paginationDto);
     }
 
     @Post('find')
