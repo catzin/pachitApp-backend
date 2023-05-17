@@ -3,26 +3,10 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { OrganizacionService } from './organizacion.service';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
 import { UpdateMascotaDto } from './dto/update-mascota.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import * as multerS3 from 'multer-s3';
-import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
-import { v4 as uuidv4 } from 'uuid';
 import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 
-
-
-
-const config: S3ClientConfig = {
-  region:'us-east-1',
-  credentials: {
-    accessKeyId:'AKIAY4JYBNID4IGQTBU7',
-    secretAccessKey:'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',
-  },
-};
-const s3 = new S3Client(config);
 
 @Controller('organizacion')
 export class OrganizacionController {
@@ -160,29 +144,11 @@ export class OrganizacionController {
 
 
   @Post('creaMascota')
-  @UseInterceptors(FilesInterceptor('fotos', 3, {
-    storage: multerS3({
-      s3: s3,
-      bucket: "pachistorages",
-      acl: '',
-      contentType: multerS3.AUTO_CONTENT_TYPE,
-      metadata: (req, file, cb) => {
-        cb(null, { fieldName: file.fieldname });
-      },
-      key: (req, file, cb) => {
-        const ext = file.originalname.split('.').pop();
-        const filename = uuidv4();
-        cb(null, `${filename}.${ext}`);
-      },
-
-    })
-  }
-
-  ))
+  @UseInterceptors(FilesInterceptor('files')) 
   async createMascota(
     @Body() createMascotaDto:any,
-    @UploadedFiles() fotos
-  ): Promise<{ status: HttpStatus; message: string; }> {
+    @UploadedFiles() fotos : Express.Multer.File[],
+  ){
 
     const newPet: CreateMascotaDto = {
       nombre: createMascotaDto.nombre,
@@ -209,7 +175,7 @@ export class OrganizacionController {
     }
     return {
       status: HttpStatus.CREATED,
-      message: 'Mascota created successfully',
+      pet : result
     };
   }
   

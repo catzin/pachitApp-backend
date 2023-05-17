@@ -3,10 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 
 import { CreateUserDto, LoginUserDto } from './dto';
 import { Repository } from 'typeorm';
-import { Usuario } from 'src/auth/entities/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { UserType } from 'src/catalogs/entities';
+import { Usuario } from 'src/user/entity/usuario.entity';
+
 
 
 @Injectable()
@@ -15,7 +17,6 @@ export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private readonly userRepository: Repository<Usuario>,
-
     private readonly jwtService: JwtService
     // ,private userService: UserService,
     // private jwtService: JwtService,
@@ -24,7 +25,7 @@ export class AuthService {
   async create(createUserDto: CreateUserDto) {
 
     try {
-
+  
       const { correo, contrasena, ...userData } = createUserDto;
 
 
@@ -34,18 +35,18 @@ export class AuthService {
       });
 
       if (existingUser) {
+        
         throw new BadRequestException('El correo ya está en uso');
       }
-
-      const user = this.userRepository.create({
+     
+      const user = await this.userRepository.create({
         ...userData,
         contrasena: bcrypt.hashSync(contrasena, 10),
-        correo: correo
+        correo: correo,
+   
 
       });
       await this.userRepository.save(user)
-      delete user.contrasena;
-
       const {nombre,apellidoPaterno,apellidoMaterno,idusuario } = user;
 
       return {
@@ -55,11 +56,12 @@ export class AuthService {
         correo,
         idusuario,
         token: this.getJwtToken({ idusuario: user.idusuario }),
-        tipoUsuarioIdTipoUsuario : 1,
+        tipoUsuario_idTipoUsuario : 1
       };
 
 
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
 
@@ -73,18 +75,21 @@ export class AuthService {
     const { contrasena, correo } = loginUserDto; //Como extraer y trabajar con caractesticas del DTO
 
     const user = await this.userRepository.findOne({
-
-      where: { correo },
-      select: { correo: true, contrasena: true, idusuario: true, nombre: true, apellidoMaterno: true, apellidoPaterno: true , tipoUsuario_idTipoUsuario : true}
+      where: { correo : correo },
+      relations : ['tipoUsuario_idTipoUsuario'],
+      
     });
 
-
-    if (!user)
+  
+    if (!user){
       throw new NotFoundException('User not found');
+    }
+     
 
-    if (!bcrypt.compareSync(contrasena, user.contrasena))
+    if (!bcrypt.compareSync(contrasena, user.contrasena)){
       throw new UnauthorizedException('Not valid credentials');
-
+    }
+     
     const{nombre,apellidoPaterno,apellidoMaterno,idusuario, tipoUsuario_idTipoUsuario} = user;
     
     return {
@@ -117,32 +122,6 @@ export class AuthService {
     throw new InternalServerErrorException('PLease check server logs');
 
   }
-
-
-
-  //   async validateUser(correo:string,contrasena:string){
-  //     const user= await this.userService.findByCorreo(correo);
-
-  //     console.log(`validateUser: correo=${correo}, contrasena=${contrasena}, user=${JSON.stringify(user)}`);
-
-  //     if(user && user.contrasena === contrasena){
-  //         return user; 
-  //     }
-
-  //     return null; //contrasena doesn't match
-  // }
-
-
-  // async login(user: any) {
-  //     if (!user || !user.correo) {
-  //       throw new Error('Invalid user object or missing correo property');
-  //     }
-
-  //     const payload = { correo: user.correo, sub: user.idusuario };
-  //     return {
-  //       access_token: this.jwtService.sign(payload),
-  //     };
-  //   }
 
 
 }

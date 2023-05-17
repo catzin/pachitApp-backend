@@ -1,5 +1,5 @@
 import { Ocupation, Residence, Sex, UserType, civilState } from "src/catalogs/entities";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn,OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn,ManyToOne,OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('usuario')
 export class Usuario{
@@ -26,9 +26,7 @@ export class Usuario{
     @Column({ type: 'text', length: 255, unique: true })
     correo: string;
 
-    @Column('text',{
-        select:false
-    })
+    @Column()
     contrasena: string; 
 
     @Column()
@@ -40,23 +38,23 @@ export class Usuario{
     @Column({unique:true})
     linkInstagram: string;
     
-    @OneToOne(() => civilState)
+    @ManyToOne(() => civilState)
     @JoinColumn({name : 'estadoCivil_idEstadoCivil'})
     estadoCivil_idEstadoCivil: number;
 
-    @OneToOne(() => Sex)
+    @ManyToOne(() => Sex)
     @JoinColumn({name : 'sexo_idSexo'})
     sexo_idSexo: number; 
 
-    @OneToOne(() => Ocupation)
+    @ManyToOne(() => Ocupation)
     @JoinColumn({name : 'ocupacion_idOcupacion'})
     ocupacion_idOcupacion: number; 
 
-    @OneToOne(() => UserType)
+    @ManyToOne(() => UserType)
     @JoinColumn({name : 'tipoUsuario_idTipoUsuario'})
     tipoUsuario_idTipoUsuario: number; 
     
-    @OneToOne(() => Residence)
+    @ManyToOne(() => Residence)
     @JoinColumn({name : 'Tipodomicilio_idTipoDomicilio'})
     Tipodomicilio_idTipoDomicilio: number; 
 

@@ -2,7 +2,6 @@ import { IsBoolean, IsDateString, IsEmail, IsNumber, IsString, Matches, MaxLengt
 
 export class CreateUserDto {
 
-
     @IsString()
     @MinLength(1)
     nombre: string;
@@ -19,12 +18,9 @@ export class CreateUserDto {
     @IsDateString()
     fechaRegistro: Date;
 
-
-
     @IsString()
     @IsEmail()
     correo: string;
-
 
     @IsString()
     @MinLength(6)

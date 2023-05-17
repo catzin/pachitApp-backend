@@ -5,19 +5,17 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Query,
   Request,
-  SetMetadata,
   UnauthorizedException,
   UploadedFile,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
+  
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -28,20 +26,9 @@ import { CreatePeticionDto } from './dto/create-peticion.dto';
 import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { v4 as uuidv4 } from 'uuid';
-import * as multerS3 from 'multer-s3';
 
-const config: S3ClientConfig = {
-  region: 'us-east-1' ,
-  credentials: {
-    accessKeyId: 'AKIAY4JYBNID4IGQTBU7',
-    secretAccessKey:'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',
-  },
-};
-const s3 = new S3Client(config);
-  
+
   @Controller('user')
   export class UserController {
     constructor(private userService: UserService) {}
@@ -111,35 +98,17 @@ const s3 = new S3Client(config);
     //Crea organizacion
     // Funcion para desarrolladores: Crea una organizacion al usuario correspondietne
     @Post('creaOrganizacion')
-    @UseInterceptors(FilesInterceptor('fotos', 2, {
-      storage: multerS3({
-        s3: s3,
-        bucket: "pachistorages",
-        acl: '',
-        contentType: multerS3.AUTO_CONTENT_TYPE,
-        metadata: (req, file, cb) => {
-          cb(null, { fieldName: file.fieldname });
-        },
-        key: (req, file, cb) => {
-          const ext = file.originalname.split('.').pop();
-          const filename = uuidv4();
-          cb(null, `${filename}.${ext}`);
-        },
-  
-      })
-    }
-  
-    ))
+    @UseInterceptors(FilesInterceptor('files'))
     async createOrganizacion(
-    @Body() createOrganizacionDto: CreateOrganizacionDto,
-    @UploadedFiles() fotos
+      
+      @UploadedFiles() fotos: Express.Multer.File[],
+      @Body() createOrganizacionDto: CreateOrganizacionDto,
+    
     ){
-  
       const result = await this.userService.createOrganizacion(createOrganizacionDto, fotos);
       return result;
     
     }
-
 
     //Hace una peticion para ser organizacion
     @Post('peticion')
@@ -235,7 +204,10 @@ const s3 = new S3Client(config);
       const masLikeada = await this.userService.mascotaMasLikeada();
       return { masLikeada };
     }
+
     @UseInterceptors(FileInterceptor('file'))
+   
+  
     @Post('profileimage')
     async uploadProfilePicture(
       @UploadedFile() file : Express.Multer.File,
@@ -246,10 +218,28 @@ const s3 = new S3Client(config);
     ){
       try{
         const result = await this.userService.updateProfilePicture(file , id);
+        console.log(result);
         return result;
       }catch(e){
         console.log(e);
       }
+    }
+
+    @Post('getImageProfile')
+    async getProfileImage(
+      @Body('idUsuario') id : string 
+    ){
+
+      try{
+
+        const result = await this.userService.getProfileImage(id);
+        return result;
+
+      }catch(e){
+        console.log(e);
+      }
+
+
     }
 
 

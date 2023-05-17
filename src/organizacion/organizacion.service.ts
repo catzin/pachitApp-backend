@@ -17,6 +17,7 @@ import { SolicitudAdopcion } from 'src/mascota/entities/solicitud-adopcion.entit
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { Recordatorio } from './entitites/recordatorio.entity';
 import { PetAge } from 'src/catalogs/entities';
+import { S3Service } from 'src/s3/s3.service';
 
 
 @Injectable()
@@ -43,7 +44,8 @@ export class OrganizacionService {
         private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
         private readonly dataSource: DataSource,
         @InjectRepository(PetAge)
-        private readonly petAgeRepository : Repository<PetAge>
+        private readonly petAgeRepository : Repository<PetAge>,
+        private readonly s3Service : S3Service
     ) { }
 
 
@@ -189,10 +191,10 @@ export class OrganizacionService {
     }
 
     //VER MASCOTAS POR ORGANIZACION
-    findMascotasbyOrganizacion(idorganizacion: string, paginationDto: PaginationDto) {
+    async findMascotasbyOrganizacion(idorganizacion: string, paginationDto: PaginationDto) {
         const { limit = 10, offset = 0 } = paginationDto;
 
-        return this.mascotaRepository.find({
+        const result = await this.mascotaRepository.find({
             take: limit,
             skip: offset,
             relations: {
@@ -200,10 +202,13 @@ export class OrganizacionService {
                 caracteristicas: true,
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
-                nivelActividad_idnivelActividad: true
+                nivelActividad_idnivelActividad: true,
+                edad : true
             },
             where: { organizacion: { idorganizacion } }
         });
+
+        return  result;
     }
 
     //VER MASCOTA POR ID
@@ -238,10 +243,11 @@ export class OrganizacionService {
     }
 
     //Crea mascota
-    async createMascota(createMascotaDto: CreateMascotaDto, files: any) {
+    async createMascota(createMascotaDto: CreateMascotaDto, files: Express.Multer.File[]) {
         try {
-
-            const { images = files, ...mascotaDetails } = createMascotaDto;
+            
+           
+            const { ...mascotaDetails } = createMascotaDto;
 
             //Busca el id de la organizacion para ver si le puede asociar una mascota   
             const organizacionFound = await this.organizacionRepository.findOne({
@@ -289,36 +295,46 @@ export class OrganizacionService {
                 createMascotaDto.caracteristicas
             );
 
+            let keys = [];
+            const imagesFinal = [];
 
-            const imagenesFinal = [];
-            for (const img of files) {
+            files.forEach((e, index) => {
+                keys.push(`${e.originalname.split('.')[0]}${Date.now()}.${e.originalname.split('.')[1]}`);
+
+            });
+       
+            const imagesUrl = await this.s3Service.uploadFiles(files,keys);
+            imagesUrl.forEach((imag,index) => {
 
                 const newImagen = this.imagenesRepository.create({
                     fechaSubida: new Date(),
-                    nombre: img.originalname,
-                    path: img.location
+                    nombre: keys[index],
+                    path: imag
                 });
                 // Crea una instancia de Imagen
-                imagenesFinal.push(newImagen); // Agrega la instancia al array
-            }
+                imagesFinal.push(newImagen)
+                
 
-            this.imagenesRepository.save(imagenesFinal);
+            });
+           
+            await this.imagenesRepository.save(imagesFinal);
 
             //Constante donde crea una mascota
-            const newMascota = this.mascotaRepository.create({
+            const newMascota = await this.mascotaRepository.create({
                 ...mascotaDetails,
                 organizacion: organizacionFound,
                 tipoMascota_idtipoMascota: tipoMascota,
                 caracteristicas,
                 nivelActividad_idnivelActividad: nivelAct,
                 tipoRaza_idtipoRaza: tipoRaza,
-                mascotaImgs: imagenesFinal,
+                mascotaImgs: imagesFinal,
                 edad: edadCreate
 
             });
-            await this.mascotaRepository.save(newMascota);
+            
+            const saved =  await this.mascotaRepository.save(newMascota);
 
-            return newMascota;
+            return saved;
         } catch (error) {
             console.log(error);
             return {

@@ -1,8 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, ParseUUIDPipe, UnauthorizedException } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, getRepository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Usuario } from './entity/usuario.entity';
@@ -51,11 +49,12 @@ export class UserService {
   async getUserType(idUsuario : string){
     const user = await this.userRepository.findOne({
       where: { idusuario : idUsuario },
-      select : {tipoUsuario_idTipoUsuario : true}
+      relations: ['tipoUsuario_idTipoUsuario']
      
     });
 
-    return user;
+    const {tipoUsuario_idTipoUsuario} = user;
+    return tipoUsuario_idTipoUsuario;
 
   }
 
@@ -151,10 +150,9 @@ export class UserService {
     }
 
     //CREA ORGANIZACION sin verificacion
-    async  createOrganizacion(organizacion:CreateOrganizacionDto , fotos : any){
+    async  createOrganizacion(organizacion:CreateOrganizacionDto , fotos : Express.Multer.File[]){
       try {
 
-        const { images = fotos} = organizacion;
         const {idusuario} = organizacion;
      
         const [validateStatus] = await this.peticionRepository.find({
@@ -199,6 +197,15 @@ export class UserService {
           };
           
         }
+
+        //generamos las keys para cada archivo
+        let keys = [];
+        fotos.forEach((e,index) => {
+          keys.push(`${e.originalname.split('.')[0]}${Date.now()}.${e.originalname.split('.')[1]}`);
+
+        });
+
+        const images = await this.s3Service.uploadFiles(fotos,keys);
     
         const newOrganizacion = this.organizacionRepository.create({
           ...organizacion,
@@ -209,15 +216,16 @@ export class UserService {
         newOrganizacion.linkInstagram = validateStatus.linkInstagram;
         newOrganizacion.linkWeb = validateStatus.linkWeb;
         newOrganizacion.estatus = 1;
-        newOrganizacion.fotoPerfil = images[0].location;
-        newOrganizacion.fotoPortada = images[1].location;    
+        newOrganizacion.fotoPerfil = images[0];
+        newOrganizacion.fotoPortada = images[1];    
         await this.peticionRepository.update({ idPeticion : validateStatus.idPeticion },{finalizada : true});
         await this.userRepository.update({idusuario : idusuario},{tipoUsuario_idTipoUsuario : 2});
-        await this.organizacionRepository.save(newOrganizacion);
+        
+        const orgSaved = await this.organizacionRepository.save(newOrganizacion);
 
         return {
           status : HttpStatus.OK,
-          newOrganizacion
+          newOrganizacion : orgSaved
         };
 
         
@@ -509,17 +517,17 @@ export class UserService {
     }
     }
 
-    //Obtiene las mascotas favoritas del usuario
-    async findMascotasFavoritas(term:string) {       
+      
       
     async updateProfilePicture(file : Express.Multer.File, idUsuario : string ){
 
-      const user = this.userRepository.findOneOrFail({
+      const user = await this.userRepository.findOneOrFail({
         where : {idusuario : idUsuario},
 
       })
 
       if(!user){
+   
         throw new HttpException(
           "ID no válido",
           400
@@ -527,9 +535,9 @@ export class UserService {
       }
 
 
-      const key = `${file.fieldname}${Date.now()}.${file.originalname.split('.')[1]}`;
+      const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
       const imageUrl = await this.s3Service.uploadFile(file,key);
-      this.userRepository.update(
+      await this.userRepository.update(
         {idusuario : idUsuario},
         {fotoPerfil : imageUrl}
         
@@ -544,6 +552,9 @@ export class UserService {
 
 
     }
+
+     //Obtiene las mascotas favoritas del usuario
+     async findMascotasFavoritas(term:string) {    
       
 
       //aqui se hace la validacion para ver por donde busca
@@ -568,6 +579,27 @@ export class UserService {
     
     }  
     
+    async getProfileImage(idUsuario : string){
+      const result = await this.userRepository.findOne({
+        where:{idusuario : idUsuario}
+      })
+
+      if(!result){
+        throw new HttpException(
+          "ID no válido",
+          400
+        );
+      }
+
+      const {fotoPerfil} = result;
+
+      return {
+        status : HttpStatus.OK,
+        message : "Success",
+        image : fotoPerfil
+      }
+
+    }
     //Contar likes de cada mascota 
     async contarMascotaFavorita(idMascota: number): Promise<number> {
       const result = await this.connection.query(
@@ -581,6 +613,8 @@ export class UserService {
       const result = await this.connection.query('CALL sp_mascotaMasLikeada()');
       return result[0][0];
     }
+
+   
 
 
 }
