@@ -76,6 +76,12 @@ export class Mascota {
   solicitudAdopcion => solicitudAdopcion.mascota)
   solicitudAdopcion: SolicitudAdopcion[];
 
+  
+  @OneToMany(() => MascotaFavorita, 
+  mascotaFavorita => mascotaFavorita.mascota)
+  mascotaFavorita: MascotaFavorita[];
+ 
+
   @ManyToMany(() => Usuario,(mascota) => mascota.user)
   @JoinTable({
     name:'mascotaLikes',

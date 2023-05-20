@@ -108,9 +108,14 @@ export class Usuario{
     documentacion1: Imagenes[];
 
 
-    @ManyToMany(() => SolicitudAdopcion, 
+    @OneToMany(() => SolicitudAdopcion, 
     solicitudAdopcion => solicitudAdopcion.usuario)
     solicitudAdopcion: SolicitudAdopcion[];
+
+    @OneToMany(() => MascotaFavorita, 
+    mascotaFavorita => mascotaFavorita.usuario)
+    mascotaFavorita: MascotaFavorita[];
+
 
     @ManyToMany(() => Mascota,(usuario) => usuario.mascota,{cascade:true})
     @JoinTable({
@@ -125,7 +130,6 @@ export class Usuario{
       }
     })
     user: Usuario[];
-
 
 
 

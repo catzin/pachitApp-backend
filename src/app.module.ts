@@ -98,36 +98,3 @@ import { UserService } from './user/user.service';
 
 })
 export class AppModule {}
-
-// @Module({
-//   imports: [
-//     UserModule,
-//     TypeOrmModule.forRoot({
-//       type: 'mysql',
-//       host: 'localhost',
-//       port: 3306,
-//       username: 'root',
-//       password: '1998',
-//       database: 'pachidbtest',
-//       entities: [Usuario,//civilState,Sex,UserType,Ocupation,Residence,RelationShip,
-//       //DocumentType,
-//       Organizacion,Peticion,Mascota,Caracteristica,TipoDocumento,
-//       Imagenes,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,
-//       Ubicacion,HorarioContacto,Recordatorio,MascotaFavorita],
-//       synchronize: true,
-//     }),
-//     AuthModule,
-//     // CatalogsModule,
-//     CommonModule,
-//     MascotaModule,
-//     OrganizacionModule,
-//     //MascotaImagen,
-//     MulterModule.register({
-//       dest: './public/mascotas'
-//     })
-
-//   ],
-//   controllers: [OrganizacionController],
-//   providers: [OrganizacionService],
-// })
-// export class AppModule {}

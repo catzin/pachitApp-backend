@@ -464,7 +464,7 @@ export class UserService {
             },
         });
 
-        userFound.user.
+        
 
         if (!userFound) {
           throw new NotFoundException('User not found');
