@@ -80,22 +80,7 @@ export class Mascota {
   mascotaFavorita: MascotaFavorita[];
  
 
-  @ManyToMany(() => Usuario,(mascota) => mascota.user)
-  @JoinTable({
-    name:'mascotaLikes',
-    joinColumn:{
-      name:'idmascota',
-      referencedColumnName:'id'
-    },
-    inverseJoinColumn:{
-      name:'idusuario',
-      referencedColumnName:'idusuario'
-    }
-  })
-  mascota: Mascota[];
  
- 
-
 
 
 }

@@ -490,11 +490,7 @@ export class UserService {
             },
         });
 
-<<<<<<< HEAD
-        
-=======
-        userFound.user;
->>>>>>> 6e0cfff9556cd63abe3d985136f71615876cac27
+      
 
         if (!userFound) {
           throw new NotFoundException('User not found');

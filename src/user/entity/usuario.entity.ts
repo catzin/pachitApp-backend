@@ -117,22 +117,4 @@ export class Usuario{
     mascotaFavorita: MascotaFavorita[];
 
 
-    @ManyToMany(() => Mascota,(usuario) => usuario.mascota,{cascade:true})
-    @JoinTable({
-      name:'mascotaLikes',
-      joinColumn:{
-        name:'idusuario',
-        referencedColumnName:'idusuario'
-      },
-      inverseJoinColumn:{
-        name:'idmascota',
-        referencedColumnName:'id'
-      }
-    })
-    user: Usuario[];
-
-
-
-
-
 }
