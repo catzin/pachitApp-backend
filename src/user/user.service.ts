@@ -77,11 +77,16 @@ export class UserService {
       //limite que establecemos para paginacion
       const {limit=10, offset=0} = paginationDto
 
-      return await this.userRepository.find({
+
+      const res = await this.userRepository.find({
         take: limit,
         skip: offset,
 
         });
+
+      console.log(res);
+
+      return res;
       }
 
 
@@ -377,6 +382,8 @@ export class UserService {
 
     //Crear ubicacion de el usuario
     async creaUbicacion(ubicacion:CreateUbicacionDto){
+
+      console.log(ubicacion);
       try {
 
         //Una vez encontrado el usuario
@@ -385,6 +392,8 @@ export class UserService {
                 idusuario:ubicacion.usuario_idusuario
             },
         });
+
+        console.log(userFound);
 
         if (!userFound) {
           throw new NotFoundException('User not found');
@@ -403,7 +412,7 @@ export class UserService {
         if (solicitudFound) {
           return {
               status: HttpStatus.UNAUTHORIZED,
-              message: 'Los usuarios solo pueden tener una ubicación',
+              ubicacion: {},
           }; 
         }
 
@@ -413,7 +422,10 @@ export class UserService {
             usuario: userFound,
         });
 
-        return this.ubicacionRepository.save(newUbicacion);
+        const saved = await this.ubicacionRepository.save(newUbicacion);
+        const ubicacionData = { ...saved };
+        delete ubicacionData.usuario;
+        return ubicacionData;
 
     } catch (error) {
       console.log(error);
@@ -426,12 +438,8 @@ export class UserService {
 
     //get all ubicaciones por usuario
     async findOndeUserUbicacion(term:string) {       
-      
-      
-
       //aqui se hace la validacion para ver por donde busca
       if( isUUID(term) ){
-
 
         const userFound = await this.userRepository.findOne({
           where:{
@@ -445,10 +453,28 @@ export class UserService {
           }
         });
 
-        return ubicacionFound;
+        if(ubicacionFound){
+          return {
+            status : HttpStatus.OK,
+            ubicacion : ubicacionFound
+          }
+        }
+        else{
+          return {
+            status : HttpStatus.NOT_FOUND,
+            ubicacion : {}
+          }
+        }
 
       }
-    
+      else{
+
+        return {
+          status : HttpStatus.NOT_FOUND,
+          ubicacion : {}
+        }
+
+      }
     }  
 
 
@@ -464,7 +490,7 @@ export class UserService {
             },
         });
 
-        userFound.user.
+        userFound.user;
 
         if (!userFound) {
           throw new NotFoundException('User not found');

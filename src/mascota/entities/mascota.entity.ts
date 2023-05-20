@@ -70,8 +70,6 @@ export class Mascota {
   })
   mascotaImgs: Imagenes[];
 
-
-
   @OneToMany(() => SolicitudAdopcion, 
   solicitudAdopcion => solicitudAdopcion.mascota)
   solicitudAdopcion: SolicitudAdopcion[];

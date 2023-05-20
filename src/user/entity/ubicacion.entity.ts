@@ -7,32 +7,40 @@ import { Usuario } from "./usuario.entity";
 @Entity("ubicacion")
 export class Ubicacion{
     @PrimaryGeneratedColumn('uuid')
-    idUbicacion: string;
+    idUbicacion
+
+    @Column()
+    street: string;
   
     @Column({ length: 45 })
-    codigoPostal: string;
+    ISOCountryCode: string;
   
     @Column({ length: 45 })
-    colonia: string;
+    PostalCode: string;
   
     @Column({ length: 45 })
-    calle: string;
+    administrativeArea: string;
 
     @Column({ length: 45 })
-    delegacion: string;
+    subadministrativeArea: string;
 
     @Column({ length: 45 })
-    ciudad: string;
+    locality: string;
+
+    @Column({ length: 45 })
+    sublocality: string;
     
     @Column({ length: 45 })
-    latitud: string;
+    thoroughfare: string;
   
     @Column({ length: 45 })
-    longitud: string;
-  
-    @Column({ length: 45 })
-    label: string;
-  
+    Subthoroughfare: string;
+
+    @Column()
+    lat: string;
+    @Column()
+    lon: string;
+
 
     @OneToOne(type => Usuario, usuario => usuario.ubicacion)
     @JoinColumn({ name: 'id_usuario' })

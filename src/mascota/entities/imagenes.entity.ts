@@ -23,6 +23,7 @@ export class Imagenes {
       name:'imagen_id',
       referencedColumnName:'id'
     },
+    
     inverseJoinColumn:{
       name:'mascota_id',
       referencedColumnName:'id'

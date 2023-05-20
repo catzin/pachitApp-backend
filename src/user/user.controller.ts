@@ -165,18 +165,26 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
     async creaUbicacion(
       @Body() creaUbicacionDto: CreateUbicacionDto
     ) {
+    
       const result = await this.userService.creaUbicacion(creaUbicacionDto);
 
+      if(result){
         return {
-          status: HttpStatus.OK,
-          accept: result
+          status : HttpStatus.OK,
+          ubicacion : result
+        }
+      }
+
+        return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          ubicacion : {}
         };
     }
 
 
-    @Get('verUsersUbicacion/:term')
+    @Post('verUsersUbicacion')
     verUserUbicacion(
-    @Param('term') term: string) {
+    @Body('idUsuario') term: string) {
       return this.userService.findOndeUserUbicacion(term);
     }
 
@@ -214,11 +222,9 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
       @Body('idUsuario') id : string,
       @Request() req
 
-
     ){
       try{
         const result = await this.userService.updateProfilePicture(file , id);
-        console.log(result);
         return result;
       }catch(e){
         console.log(e);
