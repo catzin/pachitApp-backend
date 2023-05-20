@@ -24,6 +24,7 @@ import { PetAge } from './entities';
   providers: [CatalogsService, SexService, UserTypeService, OcupationService, ResidenceService, RelationshipService, CivilStateService, DocumentTypeService, PetAgeService],
   imports: [
     TypeOrmModule.forFeature([civilState, Sex, UserType, Ocupation, Residence, RelationShip, DocumentType, PetAge])
-  ]
+  ],
+  exports:[TypeOrmModule.forFeature([civilState,Sex,Ocupation,Residence])]
 })
 export class CatalogsModule { }

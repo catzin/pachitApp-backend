@@ -452,6 +452,7 @@ export class UserService {
     }  
 
 
+
     //Da like a mascota
     async likeMascota(likeDto:CreateLikeDto){
       try {
@@ -462,6 +463,8 @@ export class UserService {
                 idusuario:likeDto.usuario
             },
         });
+
+        userFound.user.
 
         if (!userFound) {
           throw new NotFoundException('User not found');
@@ -474,7 +477,9 @@ export class UserService {
               id: likeDto.mascota,
               estatus:1
           },
-      });
+         });
+
+
 
       if (!mascotaFound) {
           return {
@@ -483,7 +488,7 @@ export class UserService {
           }; 
       }
 
-
+      
         
         const mascotaFavoritaFound = await this.mascotaFavoritaRepository.findOne({
           where: {
@@ -491,6 +496,8 @@ export class UserService {
             mascota: mascotaFound
           },
         })
+
+        console.log(mascotaFavoritaFound)
 
         //Verifica que no exista esa solicitud, ya que los usuarios solo pueden tener una solicitud en proceso.
         if (mascotaFavoritaFound) {
@@ -553,10 +560,8 @@ export class UserService {
 
     }
 
-     //Obtiene las mascotas favoritas del usuario
-     async findMascotasFavoritas(term:string) {    
-      
-
+    //Obtiene las mascotas favoritas del usuario
+    async findMascotasFavoritas(term:string){   
       //aqui se hace la validacion para ver por donde busca
       if( isUUID(term) ){
 
@@ -577,7 +582,8 @@ export class UserService {
 
       }
     
-    }  
+    } 
+   
     
     async getProfileImage(idUsuario : string){
       const result = await this.userRepository.findOne({
@@ -600,6 +606,13 @@ export class UserService {
       }
 
     }
+
+    async verificarCorreo(email: string): Promise<boolean> {
+      const usuario = await this.userRepository.findOne(
+        { where: { correo: email } });
+      return !!usuario; // Devuelve true si se encontró un usuario con el correo proporcionado
+    }
+    
     //Contar likes de cada mascota 
     async contarMascotaFavorita(idMascota: number): Promise<number> {
       const result = await this.connection.query(
@@ -617,4 +630,4 @@ export class UserService {
    
 
 
-}
+  }

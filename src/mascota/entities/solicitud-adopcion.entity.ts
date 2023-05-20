@@ -13,9 +13,9 @@ export class SolicitudAdopcion{
     @Column()
     estatus: number
 
-    @ManyToOne(() => Mascota, (mascota) => mascota.solicitudAdopcion)
+    @ManyToOne(() => Mascota)
     mascota: Mascota
 
-    @ManyToOne(() => Usuario, (usuario) => usuario.solicitudAdopcion)
+    @ManyToOne(() => Usuario)
     usuario: Usuario
 }

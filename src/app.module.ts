@@ -36,19 +36,21 @@ import { TimeoutInterceptor } from './shared/timeout.interceptor';
 import { S3Service } from './s3/s3.service';
 import { S3Module } from './s3/s3.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserService } from './user/user.service';
 
 
 
 @Module({
   imports: [
     UserModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'pachibase-1.c89xxzaf5mwy.us-east-1.rds.amazonaws.com',
       port: 3306,
       username: 'admin',
       password: 'Holamundo11!',
-      database: 'pachiDB',
+      database: 'pachiDBTest',
       entities: [
         Usuario, 
         civilState, 
@@ -72,8 +74,7 @@ import { ConfigModule } from '@nestjs/config';
         HorarioContacto, 
         Recordatorio,
         PetAge,
-        MascotaFavorita
-      ],
+        MascotaFavorita],
       synchronize: false,
     }),
     
@@ -90,8 +91,9 @@ import { ConfigModule } from '@nestjs/config';
   providers: [
     OrganizacionService,
     S3Service,
-   
+    UserService
   ],
+  exports:[UserModule,UserService]
      
 
 })

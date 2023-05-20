@@ -59,4 +59,8 @@ export class CreateUserDto {
     isactive: boolean;
 
 
+
+
+
+    
 }

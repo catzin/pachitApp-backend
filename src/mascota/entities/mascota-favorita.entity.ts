@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany } from "typeorm"
 import { Mascota } from "./mascota.entity";
 import { Usuario } from "src/user/entity/usuario.entity";
 
@@ -8,9 +8,15 @@ export class MascotaFavorita{
     @PrimaryGeneratedColumn()
     idMascotaUsuario: number
 
-    @ManyToOne(() => Mascota, (mascota) => mascota.solicitudAdopcion)
+    // @Column()
+    // idMascotaUsuario: number
+
+    // @Column()
+    // idMascotaUsuario: number
+
+    @ManyToMany(() => Mascota)
     mascota: Mascota
 
-    @ManyToOne(() => Usuario, (usuario) => usuario.solicitudAdopcion)
+    @ManyToMany(() => Usuario)
     usuario: Usuario
 }

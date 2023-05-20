@@ -16,7 +16,7 @@ import { S3Module } from 'src/s3/s3.module';
 @Module({
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService,TypeOrmModule],
+  exports: [UserService,TypeOrmModule,],
   imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita]),AuthModule, S3Module],
   
 })

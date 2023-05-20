@@ -54,6 +54,7 @@ export class Usuario{
     @JoinColumn({name : 'estadoCivil_idEstadoCivil'})
     estadoCivil_idEstadoCivil: number;
 
+
     @ManyToOne(() => Sex)
     @JoinColumn({name : 'sexo_idSexo'})
     sexo_idSexo: number; 
@@ -69,6 +70,8 @@ export class Usuario{
     @ManyToOne(() => Residence)
     @JoinColumn({name : 'Tipodomicilio_idTipoDomicilio'})
     Tipodomicilio_idTipoDomicilio: number; 
+
+    
 
     @Column()
     isactive: boolean;
@@ -105,13 +108,23 @@ export class Usuario{
     documentacion1: Imagenes[];
 
 
-    @OneToMany(() => SolicitudAdopcion, 
+    @ManyToMany(() => SolicitudAdopcion, 
     solicitudAdopcion => solicitudAdopcion.usuario)
     solicitudAdopcion: SolicitudAdopcion[];
 
-    @OneToMany(() => MascotaFavorita, 
-    mascotaFavorita => mascotaFavorita.usuario)
-    mascotaFavorita: MascotaFavorita[];
+    @ManyToMany(() => Mascota,(usuario) => usuario.mascota,{cascade:true})
+    @JoinTable({
+      name:'mascotaLikes',
+      joinColumn:{
+        name:'idusuario',
+        referencedColumnName:'idusuario'
+      },
+      inverseJoinColumn:{
+        name:'idmascota',
+        referencedColumnName:'id'
+      }
+    })
+    user: Usuario[];
 
 
 

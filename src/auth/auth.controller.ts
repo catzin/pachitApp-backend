@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Request, HttpException, HttpStatus, Get, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, HttpException, HttpStatus, Get, SetMetadata, Res, Req } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,7 +14,10 @@ import { UserRoleGuard } from './guards/user-role/user-role.guard';
 @Controller('auth')
 export class AuthController {
 
-  constructor(private authService: AuthService){}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    ){}
 
   
   @Post('register')
@@ -66,6 +69,47 @@ export class AuthController {
       ok:true,
       user
     };
+  }
+
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googlelogin(){}
+
+  @Get('test123')
+  @UseGuards(AuthGuard('jwt'))
+  async test123(@Res() res){
+    res.json('success');
+
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async callback(
+  @Req() req, @Res() res)
+  //,@Body() createUserGoogleDto: CreateUserGoogleDto)
+  {
+    //Verifica que el correo que eligio para ingresar no exista en la BD
+    const correoExistente = await this.userService.verificarCorreo(req.user.email);
+  
+    
+
+    //Si no existe crea un usuario con el DTO
+    if (!correoExistente) {
+      const createUserGoogle = await this.authService.createCuentaGoogle(
+        req.user.email,
+        req.user.firstName,
+        req.user.lastName,
+        req.user.picture     
+      );
+    }
+
+    const jwt = await this.authService.loginGoogle(req.user);
+    
+    res.set('authorization', jwt.access_token);
+
+    res.json(req.user);
+    
   }
 
 
