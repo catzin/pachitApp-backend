@@ -1,45 +1,50 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt, IsOptional } from 'class-validator';
 
 export class CreateUbicacionDto {
   @IsString()
-  codigoPostal: string;
+  @IsOptional()
+  street: string;
 
   @IsString()
-  asentamiento: string;
+  @IsOptional()
+  ISOCountryCode: string;
 
   @IsString()
-  tipoAsentamiento: string;
+  @IsOptional()
+  PostalCode: string;
 
   @IsString()
-  municipio: string;
+  @IsOptional()
+  administrativeArea: string;
 
   @IsString()
-  estado: string;
+  @IsOptional()
+  subadministrativeArea: string;
 
   @IsString()
-  ciudad: string;
+  @IsOptional()
+  locality: string;
 
   @IsString()
-  colonia: string;
+  @IsOptional()
+  sublocality: string;
 
   @IsString()
-  calle: string;
-
-  @IsInt()
-  numExterior: number;
+  @IsOptional()
+  thoroughfare: string;
 
   @IsString()
-  numInt: string;
+  @IsOptional()
+  Subthoroughfare: string;
 
   @IsString()
-  latitud: string;
+  @IsOptional()
+  lat: string;
 
   @IsString()
-  longitud: string;
-
-  @IsString()
-  label: string;
-
+  @IsOptional()
+  lon: string;
+  
   @IsString()
   usuario_idusuario: string;
 
