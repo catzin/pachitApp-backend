@@ -181,6 +181,12 @@ export class UserService {
             idusuario,
           },
         });
+
+        if(userFound){
+          userFound.tipoUsuario_idTipoUsuario = 2;
+          userFound.roles = 'organizacion';
+          await this.userRepository.save(userFound);
+        }
     
         if(!userFound) {
           return {

@@ -49,7 +49,7 @@ export class AuthController {
   }
 
   @Get('private2')
-  @SetMetadata('roles',[1,2])
+  @SetMetadata('roles','organizacion')
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute2(
   @GetUser() user:Usuario,
@@ -60,14 +60,13 @@ export class AuthController {
   }
 
   @Get('private3')
-  @SetMetadata('roles',[1,2])
+  @SetMetadata('roles','user')
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoute3(
   @GetUser() user:Usuario,
   ){
     return {
-      ok:true,
-      user
+      ok:true
     };
   }
 
@@ -76,12 +75,12 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googlelogin(){}
 
-  @Get('test123')
-  @UseGuards(AuthGuard('jwt'))
-  async test123(@Res() res){
-    res.json('success');
+  // @Get('test123')
+  // @UseGuards(AuthGuard('jwt'))
+  // async test123(@Res() res){
+  //   res.json('success');
 
-  }
+  // }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))

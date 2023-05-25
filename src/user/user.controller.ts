@@ -11,9 +11,11 @@ import {
   Post,
   Query,
   Request,
+  SetMetadata,
   UnauthorizedException,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
   
 } from '@nestjs/common';
@@ -27,6 +29,8 @@ import { CreateSolicitudAdopcionDto } from './dto/create-solicitud.dto';
 import { CreateUbicacionDto } from './dto/create-ubicacion.dto';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 
 
   @Controller('user')
@@ -34,13 +38,15 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
     constructor(private userService: UserService) {}
   
     @Get('test')
-    // @SetMetadata('roles',[1,2])
-    // @UseGuards(AuthGuard(), UserRoleGuard)
+    @SetMetadata('roles','user')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     async findAll(@Query() paginationDto:PaginationDto) {
       return await this.userService.findAll(paginationDto);
     }
 
     @Post('find')
+    @SetMetadata('roles','organizacion')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     async findOne(@Body('idUsuario') term: string) {
 
       try{
@@ -57,26 +63,25 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
       
     }
   
-    @Post()
-    store(@Body() createUserDto: CreateUserDto) {
-      return this.userService.create(createUserDto);
-    }
+    // @Post()
+    // store(@Body() createUserDto: CreateUserDto) {
+    //   return this.userService.create(createUserDto);
+    // }
 
-    @Delete(':idusuario')
-    deleteUser(@Param('idusuario', ParseUUIDPipe) idusuario: string) {
-      return this.userService.remove(idusuario);
-    } 
+    // @Delete(':idusuario')
+    // deleteUser(@Param('idusuario', ParseUUIDPipe) idusuario: string) {
+    //   return this.userService.remove(idusuario);
+    // } 
 
-    @Patch(':idusuario')
-    update(
-    @Param('idusuario') idusuario: string,
-    @Body() updateUserDto:UpdateUserDto){
-      return this.userService.update(idusuario,updateUserDto);
-    }
+    // @Patch(':idusuario')
+    // update(
+    // @Param('idusuario') idusuario: string,
+    // @Body() updateUserDto:UpdateUserDto){
+    //   return this.userService.update(idusuario,updateUserDto);
+    // }
 
 
     @Post('tipoUsuario')
-    
     async findUserType(
       @Body('idusuario') idusuario : string
     ){
@@ -112,6 +117,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
     //Hace una peticion para ser organizacion
     @Post('peticion')
+    @SetMetadata('roles','user')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     async createPeticion(
       @Body() createPeticionDto: CreatePeticionDto,
     ) {
@@ -148,6 +155,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
     }
 
     @Post('solicitudAdopcion')
+    @SetMetadata('roles','user')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     async solicitudAdopcion(
       @Body() createsolicitudAdopcionDto: CreateSolicitudAdopcionDto
     ) {
@@ -217,6 +226,8 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
    
   
     @Post('profileimage')
+    @SetMetadata('roles','user')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     async uploadProfilePicture(
       @UploadedFile() file : Express.Multer.File,
       @Body('idUsuario') id : string,

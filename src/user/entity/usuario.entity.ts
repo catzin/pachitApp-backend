@@ -116,5 +116,10 @@ export class Usuario{
     mascotaFavorita => mascotaFavorita.usuario)
     mascotaFavorita: MascotaFavorita[];
 
+    @Column({
+      default:'user'
+    })
+    roles:string;
+
 
 }

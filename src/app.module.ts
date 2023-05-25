@@ -37,11 +37,23 @@ import { S3Service } from './s3/s3.service';
 import { S3Module } from './s3/s3.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserService } from './user/user.service';
+import { GoogleController } from './google/google.controller';
+import { GoogleService } from './google/google.service';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 
 
 @Module({
   imports: [
+    MailerModule.forRoot({
+      transport:{
+        host:'smtp.gmail.com',
+        auth:{
+          user:'alex.iparrea.granados@gmail.com',
+          pass:'xxplncgcmhwwieqd'
+        },
+      }
+    }),
     UserModule,
     AuthModule,
     TypeOrmModule.forRoot({
@@ -75,7 +87,7 @@ import { UserService } from './user/user.service';
         Recordatorio,
         PetAge,
         MascotaFavorita],
-      synchronize: false,
+      synchronize: false
     }),
     
     AuthModule,
@@ -87,11 +99,12 @@ import { UserService } from './user/user.service';
     ConfigModule
 
   ],
-  controllers: [OrganizacionController],
+  controllers: [OrganizacionController, GoogleController],
   providers: [
     OrganizacionService,
     S3Service,
-    UserService
+    UserService,
+    GoogleService
   ],
   exports:[UserModule,UserService]
      

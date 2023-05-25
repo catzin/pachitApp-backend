@@ -56,7 +56,7 @@ export class AuthService {
         ...userData,
         contrasena: bcrypt.hashSync(contrasena, 10),
         correo: correo,
-   
+        tipoUsuario_idTipoUsuario:1
 
       });
       await this.userRepository.save(user)
@@ -126,19 +126,9 @@ export class AuthService {
   }
 
 
-  private handleDBErrors(error: any): never {
-    if (error == '23505') {
-      throw new BadRequestException(error.detail);
-    }
-    console.log(error);
-    throw new InternalServerErrorException('PLease check server logs');
-
-  }
 
   //Login Google
   async loginGoogle(user: any):Promise<any> {
-
-
     
       //Regresa el token e info usuario
         if(user) {
@@ -177,32 +167,6 @@ export class AuthService {
     }
   }
     
-
-
-  //   async validateUser(correo:string,contrasena:string){
-  //     const user= await this.userService.findByCorreo(correo);
-
-  //     console.log(`validateUser: correo=${correo}, contrasena=${contrasena}, user=${JSON.stringify(user)}`);
-
-  //     if(user && user.contrasena === contrasena){
-  //         return user; 
-  //     }
-
-  //     return null; //contrasena doesn't match
-  // }
-
-
-  // async login(user: any) {
-  //     if (!user || !user.correo) {
-  //       throw new Error('Invalid user object or missing correo property');
-  //     }
-
-  //     const payload = { correo: user.correo, sub: user.idusuario };
-  //     return {
-  //       access_token: this.jwtService.sign(payload),
-  //     };
-  //   }
-
 
 }
 

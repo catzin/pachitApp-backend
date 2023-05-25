@@ -49,8 +49,9 @@ export class CreateUserDto {
     @IsNumber()
     ocupacion_idOcupacion: number; 
 
-    @IsNumber()
-    tipoUsuario_idTipoUsuario: number; 
+    //Se quita el tipo de suuario del DTO, ya que eso lo configuramos nosotros
+    // @IsNumber()
+    // tipoUsuario_idTipoUsuario: number; 
 
     @IsNumber()
     Tipodomicilio_idTipoDomicilio: number; 

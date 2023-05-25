@@ -17,7 +17,8 @@ export class UserRoleGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
 
 
-    const validRoles: number[] = this.reflector.get(META_ROLES,context.getHandler());
+    const validRoles: string = this.reflector.get(META_ROLES,context.getHandler());
+
 
     const req = context.switchToHttp().getRequest();
     const user = req.user as Usuario;
@@ -25,16 +26,12 @@ export class UserRoleGuard implements CanActivate {
     if(!user)
       throw new BadRequestException('User not found');
 
-    
-    if(user.tipoUsuario_idTipoUsuario == 1){
+
+      if(validRoles==user.roles){
       return true;
-    }
-
-    throw new ForbiddenException(
-      'User most be a "Usuario Normal"'
-    );
-    //console.log({userRoles: user.tipoUsuario_idTipoUsuario});
-
-    return true;
+      }else{
+        throw new BadRequestException(`This user should be a: ${validRoles}`);
+      }
+  
   }
 }

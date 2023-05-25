@@ -6,6 +6,8 @@ import { UpdateMascotaDto } from './dto/update-mascota.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 
 
 @Controller('organizacion')
@@ -57,17 +59,15 @@ export class OrganizacionController {
 
   //Obtiene organizaciones con un limit y offset
   @Get('vertodasOrganizaciones')
-  // @SetMetadata('roles',[1,2])
-  // @UseGuards(AuthGuard(), UserRoleGuard)
   findAllOrganizaciones(@Query() paginationDto: PaginationDto) {
     return this.organizacionService.findAllOrganicaciones(paginationDto);
   }
 
-  // @SetMetadata('roles',[1,2])
-  // @UseGuards(AuthGuard(), UserRoleGuard)
 
     //Obtiene mascotas con un limit y offset
     @Post('verEstatusMascotas')
+    @SetMetadata('roles','organizacion')
+    @UseGuards(AuthGuard(), UserRoleGuard)
     verEstatusMascotas(
       @Body() verMascotasDto: VerMascotasDto,
     ) {
@@ -128,6 +128,8 @@ export class OrganizacionController {
 
   //Actualiza la mascota por id con o sin imagenes
   @Patch(':id/mascota')
+  @SetMetadata('roles','organizacion')
+  @UseGuards(AuthGuard(), UserRoleGuard)
   updateMascota(
     @Param('id') id: number,
     @Body() updateMascotaDto: UpdateMascotaDto
@@ -137,13 +139,18 @@ export class OrganizacionController {
 
   //Elimina una mascota por id
   @Delete(':id/mascota/delete')
+  @SetMetadata('roles','organizacion')
+  @UseGuards(AuthGuard(), UserRoleGuard)
   deleteMascota(
     @Param('id') id: number) {
     this.organizacionService.deleteMascota(id);
   }
 
 
+  
   @Post('creaMascota')
+  @SetMetadata('roles','organizacion')
+  @UseGuards(AuthGuard(), UserRoleGuard)
   @UseInterceptors(FilesInterceptor('files')) 
   async createMascota(
     @Body() createMascotaDto:any,
@@ -181,6 +188,8 @@ export class OrganizacionController {
   
   //CREA UN RECORDATORIO 
   @Post('creaRecordatorio')
+  @SetMetadata('roles','organizacion')
+  @UseGuards(AuthGuard(), UserRoleGuard)
   async creaRecordatorio(
     @Body() creaRecordatorio: CreateRecordatorioDto
   ) {
@@ -194,6 +203,8 @@ export class OrganizacionController {
 
 
   @Get(':term/verRecordatorios')
+  @SetMetadata('roles','organizacion')
+  @UseGuards(AuthGuard(), UserRoleGuard)
   verRecordatorios(
   @Param('term') term: string) {
     return this.organizacionService.finAllRecordatorios(term);
