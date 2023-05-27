@@ -49,8 +49,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
       transport:{
         host:'smtp.gmail.com',
         auth:{
-          user:'alex.iparrea.granados@gmail.com',
-          pass:'xxplncgcmhwwieqd'
+          user:'pachidevelopers@gmail.com',
+          pass:'Holamundo11!'
         },
       }
     }),
@@ -58,11 +58,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
     AuthModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'pachibase-1.c89xxzaf5mwy.us-east-1.rds.amazonaws.com',
+      host: 'pachibase.cux10ohgatma.us-east-1.rds.amazonaws.com',
       port: 3306,
       username: 'admin',
-      password: 'Holamundo11!',
-      database: 'pachiDBTest',
+      password: 'm9IkWP47PjXDFwwS1LyS',
+      database: 'pachiDB',
       entities: [
         Usuario, 
         civilState, 
@@ -87,7 +87,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         Recordatorio,
         PetAge,
         MascotaFavorita],
-      synchronize: false
+      synchronize: true
     }),
     
     AuthModule,
