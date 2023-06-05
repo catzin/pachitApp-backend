@@ -7,14 +7,11 @@ import { Ubicacion } from "./ubicacion.entity";
 import { HorarioContacto } from "./horario-contacto.entity";
 import { MascotaFavorita } from "src/mascota/entities/mascota-favorita.entity";
 import { Ocupation, Residence, Sex, UserType, civilState } from "src/catalogs/entities";
-<<<<<<< Updated upstream
 import { Referencia } from "./referencia.entity";
 import { Firma } from "./firma.entity";
 import { Domicilio } from "./domicilio.entity";
 import { Documento } from "./documento.entity";
-=======
 import { Adopcion } from "src/mascota/entities/adopcion.entity";
->>>>>>> Stashed changes
 
 @Entity("usuario")
 export class Usuario{
@@ -113,7 +110,6 @@ export class Usuario{
     roles:string;
 
 
-<<<<<<< Updated upstream
     @OneToMany(() => Referencia, contacto => contacto.usuario)
     contactosReferencia: Referencia[];
 
@@ -126,10 +122,8 @@ export class Usuario{
     @OneToMany(() => Documento, documento => documento.usuario)
     documentacion: Domicilio[];
 
-=======
     @OneToMany(() => Adopcion, adopcion => adopcion.usuario)
     adopciones: Adopcion[];
->>>>>>> Stashed changes
 
 
 }

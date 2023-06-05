@@ -254,6 +254,7 @@ export class MascotaService {
 
           if (today.getTime() === fechaNotificacion15Dias.getTime()) {
             // Realizar acción para notificar a los usuarios después de 15 días
+            
             console.log('Notificar después de 15 días:', adopcion);
           }
     
