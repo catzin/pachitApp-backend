@@ -34,6 +34,7 @@ import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 import { createReferenciaDto } from './dto/create-referencia.dto';
 import { patchUserDto } from './dto/patch-user.dto';
 import { CreateHorarioDto } from './dto/create-horario.dto';
+import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
 
 
   @Controller('user')
@@ -317,16 +318,7 @@ import { CreateHorarioDto } from './dto/create-horario.dto';
 
     }
 
-    @Get('mascotaFAV/:id')
-    async contarMascotaFavorita(@Param('id') idMascota: string): Promise<number> {
-      return this.userService.contarMascotaFavorita(Number(idMascota));
-    }
 
-    @Get('x/c')
-    async mascotaMasLikeada(): Promise<any> {
-      const masLikeada = await this.userService.mascotaMasLikeada();
-      return { masLikeada };
-    }
 
     @UseInterceptors(FileInterceptor('file'))
     @Post('profileimage')
@@ -359,8 +351,6 @@ import { CreateHorarioDto } from './dto/create-horario.dto';
       }catch(e){
         console.log(e);
       }
-
-
     }
 
     @Get('masLikeada')
@@ -373,6 +363,34 @@ import { CreateHorarioDto } from './dto/create-horario.dto';
       }catch(e){
         throw new HttpException(e.message, e.status);
   
+      }
+    }
+
+    //Cambia estatus de solicitudes para adoptar
+    @Patch('tiempoSeguimiento')
+    @SetMetadata('roles','user')
+    @UseGuards(AuthGuard(), UserRoleGuard)
+    async changeSolicitud(@Body() updateSeguimientoDto:UpdateSeguimientoDto) {
+      return this.userService.updateAdopcionSeguimiento(updateSeguimientoDto);
+    }
+
+  
+    //Sube la imagen de seguimiento
+    @Post('seguimientoImage')
+    @SetMetadata('roles','user')
+    @UseInterceptors(FileInterceptor('file'))
+    @UseGuards(AuthGuard(), UserRoleGuard)
+    async uploadSeguimientoPicture(
+      @UploadedFile() file : Express.Multer.File,
+      @Body('idUsuario') id : string,
+      @Request() req
+
+    ){
+      try{
+        const result = await this.userService.uploadSeguimientoPicture(file , id);
+        return result;
+      }catch(e){
+        console.log(e);
       }
     }
 

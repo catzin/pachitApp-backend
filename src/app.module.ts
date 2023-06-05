@@ -44,6 +44,10 @@ import { Referencia } from './user/entity/referencia.entity';
 import { Firma } from './user/entity/firma.entity';
 import { Domicilio } from './user/entity/domicilio.entity';
 import { Documento } from './user/entity/documento.entity';
+import { Adopcion } from './mascota/entities/adopcion.entity';
+import { TiempoSeguimiento } from './mascota/entities/tiempo-seguimiento';
+import { MascotaService } from './mascota/mascota.service';
+import { AppService } from './app.service';
 
 
 
@@ -66,7 +70,7 @@ import { Documento } from './user/entity/documento.entity';
       port: 3306,
       username: 'admin',
       password: 'm9IkWP47PjXDFwwS1LyS',
-      database: 'pachiDB',
+      database: 'pachiDBTest',
       entities: [
         Usuario, 
         civilState, 
@@ -94,8 +98,10 @@ import { Documento } from './user/entity/documento.entity';
         MascotaFavorita,
         Firma,
         Documento,
-        Domicilio
-      ],
+        Domicilio,     
+        MascotaFavorita,
+        Adopcion,
+        TiempoSeguimiento],
       synchronize: true
     }),
     
@@ -113,8 +119,9 @@ import { Documento } from './user/entity/documento.entity';
     OrganizacionService,
     S3Service,
     UserService,
-    GoogleService
-  ],
+    GoogleService,
+    MascotaService,
+    AppService  ],
   exports:[UserModule,UserService]
      
 

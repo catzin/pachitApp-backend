@@ -26,6 +26,9 @@ import { Domicilio } from './entity/domicilio.entity';
 import { Documento } from './entity/documento.entity';
 import { HorarioContacto } from './entity/horario-contacto.entity';
 import { CreateHorarioDto } from './dto/create-horario.dto';
+import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
+import { Adopcion } from 'src/mascota/entities/adopcion.entity';
+import { Imagenes } from 'src/mascota/entities/imagenes.entity';
 
 
 @Injectable()
@@ -53,15 +56,20 @@ export class UserService {
     private readonly parentescoRepository: Repository<RelationShip>,
     @InjectRepository(Referencia)
     private readonly referenciaRepository: Repository<Referencia>,
-    private s3Service: S3Service,
     @InjectRepository(Domicilio)
     private readonly domicilioRepository: Repository<Domicilio>,
     @InjectRepository(Documento)
     private readonly documentoRepository: Repository<Documento>,
     @InjectRepository(HorarioContacto)
     private readonly horarioRepository: Repository<HorarioContacto>,
+    @InjectRepository(Adopcion)
+    private readonly adopcionRepository: Repository<Adopcion>,
+    @InjectRepository(Imagenes)
+    private readonly imagenesRepository: Repository<Imagenes>,
+    private s3Service : S3Service
+  ) {}
 
-  ) { }
+  
 
 
 
@@ -1051,6 +1059,103 @@ export class UserService {
     return -1;
 
   }
+    async updateAdopcionSeguimiento(updateSeguimientoDto:UpdateSeguimientoDto){
+      
+      //Busca el id del usuario
+      const userFound = await this.userRepository.findOne({
+          where:{
+            idusuario: updateSeguimientoDto.usuario
+          },
+      });
+
+      if (!userFound) {
+        return {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'No se encontro al Usuario',
+        };
+        
+      }
+      
+       //Busca que la solicitud sea estatus 3 con ese usuario y mascota
+       const adopcionFound = await this.adopcionRepository.findOne({
+        where: {
+          usuario: userFound
+        }
+      });
+      
+      if (!adopcionFound) {
+        return {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'No se ha encontrado una adopcion con el usuario ingresado',
+        };
+      }   
+
+      //Actualiza la adopcion el el tiempo de seguimiento
+      adopcionFound.tipoSeguimiento_idTiempoSeguimiento = updateSeguimientoDto.tipoSeguimiento;
+
+      // Guardar los cambios en la base de datos
+      await this.adopcionRepository.save(adopcionFound);
+
+      return {
+        status: HttpStatus.OK,
+        message: `Se ha establecido el tiempo de seguimeinto a la adopcion`
+      };
+
+
+    }
+
+    //Sube la foto de el seguimiento
+    async uploadSeguimientoPicture(file : Express.Multer.File, idUsuario : string ){
+
+      const user = await this.userRepository.findOneOrFail({
+        where : {idusuario : idUsuario},
+
+      })
+
+      if(!user){
+   
+        throw new HttpException(
+          "ID no válido",
+          400
+        );
+      }
+
+      
+      const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
+      const imageUrl = await this.s3Service.uploadFile(file,key);
+
+      console.log(file)
+
+      const newImagen = this.imagenesRepository.create({
+        fechaSubida: new Date(),
+        nombre: key,
+        path: imageUrl
+      });
+
+      await this.imagenesRepository.save(newImagen);
+
+      const adopcionFound = await this.adopcionRepository.findOneOrFail({
+        where : {usuario : user},
+
+      })
+
+      const x = [];
+      x.push(newImagen);
+      
+      adopcionFound.adopcionImgs = x;
+
+    
+      const saved =  await this.adopcionRepository.save(adopcionFound);
+
+      return {
+        status : HttpStatus.OK,
+        imageUrl
+      }
+
+
+
+
+    }
 
 
 

@@ -3,6 +3,7 @@ import { Ubicacion } from 'src/user/entity/ubicacion.entity';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Recordatorio } from './recordatorio.entity';
+import { Adopcion } from 'src/mascota/entities/adopcion.entity';
 
 @Entity({ name: 'organizacion' })
 export class Organizacion{
@@ -58,6 +59,10 @@ export class Organizacion{
     )
     recordatorio: Recordatorio[];
 
+
+
+    @OneToMany(() => Adopcion, adopcion => adopcion.organizacion)
+    adopciones: Adopcion[];
 
 
       

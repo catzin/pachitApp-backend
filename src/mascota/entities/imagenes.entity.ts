@@ -1,6 +1,7 @@
 import { Mascota } from 'src/mascota/entities/mascota.entity';
 
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable } from 'typeorm';
+import { Adopcion } from './adopcion.entity';
 
 @Entity('imagen')
 export class Imagenes {
@@ -30,6 +31,22 @@ export class Imagenes {
     }
   })
   mascotas: Mascota[];
+
+  //Imagenes de seguimiento
+  @ManyToMany(() => Adopcion , adopcion => adopcion.adopcionImgs, {cascade : true})
+  @JoinTable({
+    name:'evidencia_seguimiento',
+    joinColumn:{
+      name:'imagen_id',
+      referencedColumnName:'id'
+    },
+    
+    inverseJoinColumn:{
+      name:'adopcion_id',
+      referencedColumnName:'id'
+    }
+  })
+  imgsSeguimiento: Adopcion[];
 
 
 } 

@@ -17,12 +17,14 @@ import { RelationShip } from 'src/catalogs/entities/relationShip.entity';
 import { Firma } from './entity/firma.entity';
 import { Domicilio } from './entity/domicilio.entity';
 import { Documento } from './entity/documento.entity';
+import { Adopcion } from 'src/mascota/entities/adopcion.entity';
+import { Imagenes } from 'src/mascota/entities/imagenes.entity';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService,TypeOrmModule,],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita,Referencia,RelationShip,Firma,Documento,Domicilio]),AuthModule, S3Module],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita,Referencia,RelationShip,Firma,Documento,Domicilio,Adopcion,Imagenes]),AuthModule, S3Module],
+  exports: [UserService,TypeOrmModule,TypeOrmModule.forFeature([Adopcion])],
   
 })
 export class UserModule {}
