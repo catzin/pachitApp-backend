@@ -11,7 +11,10 @@ export class SolicitudAdopcion{
     fechaSolicitud: Date;
 
     @Column()
-    estatus: number
+    estatus: number;
+
+    @Column()
+    motivo : string;
 
     @ManyToOne(() => Mascota, (mascota) => mascota.solicitudAdopcion)
     mascota: Mascota

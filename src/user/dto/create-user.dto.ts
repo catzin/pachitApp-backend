@@ -1,5 +1,5 @@
 
-import { IsEmail, IsString, IsNumber, MinLength, IsBoolean, IsDateString } from 'class-validator';
+import { IsEmail, IsString, IsNumber, MinLength, IsBoolean, IsDateString, IsOptional } from 'class-validator';
 import { Unique } from 'typeorm';
 
 
@@ -38,6 +38,10 @@ export class CreateUserDto {
 
   @IsString()
   linkInstagram: string; 
+
+  @IsString()
+  @IsOptional()
+  telefono : string
 
   @IsNumber()
   estadoCivil_idEstadoCivil: number; 

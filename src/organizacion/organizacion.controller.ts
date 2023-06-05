@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query, SetMetadata, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query, SetMetadata, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { OrganizacionService } from './organizacion.service';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
 import { UpdateMascotaDto } from './dto/update-mascota.dto';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -66,7 +66,7 @@ export class OrganizacionController {
 
     //Obtiene mascotas con un limit y offset
     @Post('verEstatusMascotas')
-    @SetMetadata('roles','organizacion')
+    @SetMetadata('roles',['organizacion'])
     @UseGuards(AuthGuard(), UserRoleGuard)
     verEstatusMascotas(
       @Body() verMascotasDto: VerMascotasDto,
@@ -119,16 +119,26 @@ export class OrganizacionController {
   }
 
   //Obtiene la mascota por id
-  @Get(':id/mascota')
-  findMascotabyId(
-    @Param('id') id: number,
-    @Query() paginationDto: PaginationDto) {
-    return this.organizacionService.findMascotasbyId(id);
+  @Post('mascota')
+  async findMascotabyId(
+    @Body('idmascota') id: number) {
+    try{
+      const result = await this.organizacionService.findMascotasbyId(id);
+
+      return {
+        status : HttpStatus.OK,
+        pet : result
+      }
+
+    }catch(e){
+
+    }
+   
   }
 
   //Actualiza la mascota por id con o sin imagenes
   @Patch(':id/mascota')
-  @SetMetadata('roles','organizacion')
+  @SetMetadata('roles',['organizacion'])
   @UseGuards(AuthGuard(), UserRoleGuard)
   updateMascota(
     @Param('id') id: number,
@@ -139,7 +149,7 @@ export class OrganizacionController {
 
   //Elimina una mascota por id
   @Delete(':id/mascota/delete')
-  @SetMetadata('roles','organizacion')
+  @SetMetadata('roles',['organizacion'])
   @UseGuards(AuthGuard(), UserRoleGuard)
   deleteMascota(
     @Param('id') id: number) {
@@ -149,7 +159,7 @@ export class OrganizacionController {
 
   
   @Post('creaMascota')
-  @SetMetadata('roles','organizacion')
+  @SetMetadata('roles',['organizacion'])
   @UseGuards(AuthGuard(), UserRoleGuard)
   @UseInterceptors(FilesInterceptor('files')) 
   async createMascota(
@@ -167,7 +177,8 @@ export class OrganizacionController {
       sexo: createMascotaDto.sexo,
       estatus: Number(createMascotaDto.estatus),
       caracteristicas:  createMascotaDto.caracteristicas,
-      idOrganizacion : createMascotaDto.idOrganizacion
+      idOrganizacion : createMascotaDto.idOrganizacion,
+      secureDisable : createMascotaDto.secureDisable
 
     }
 
@@ -188,7 +199,7 @@ export class OrganizacionController {
   
   //CREA UN RECORDATORIO 
   @Post('creaRecordatorio')
-  @SetMetadata('roles','organizacion')
+  @SetMetadata('roles',['organizacion'])
   @UseGuards(AuthGuard(), UserRoleGuard)
   async creaRecordatorio(
     @Body() creaRecordatorio: CreateRecordatorioDto
@@ -202,12 +213,98 @@ export class OrganizacionController {
   }
 
 
-  @Get(':term/verRecordatorios')
-  @SetMetadata('roles','organizacion')
+  @Post('verRecordatorios')
+  @SetMetadata('roles',['organizacion'])
   @UseGuards(AuthGuard(), UserRoleGuard)
-  verRecordatorios(
-  @Param('term') term: string) {
-    return this.organizacionService.finAllRecordatorios(term);
+  async verRecordatorios(
+  @Body('idOrg') term: string) {
+
+    try{
+      const resposne = await this.organizacionService.finAllRecordatorios(term);
+      return resposne;
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+    }
+    
+  }
+
+
+  @Post('miOrganizacion')
+  async findOrgInfo(
+    @Body('idusuario') usuario : string
+  ){
+    try{
+      const result = await this.organizacionService.findMyOrg(usuario);
+      return {
+        status : HttpStatus.OK,
+        message : 'Success',
+        org : result
+      }
+    }catch(e){
+
+       throw new HttpException(e.message, e.status);
+
+    }
+  }
+
+  @Post('firmar')
+  @UseInterceptors(FileInterceptor('file')) 
+  async uploadSignature(
+    @Body('idusuario') idusuario : string, 
+    @UploadedFile() foto : Express.Multer.File,
+  ){
+    try{
+
+      const result = await this.organizacionService.uploadSignature(idusuario , foto);
+      return {
+        status : HttpStatus.OK,
+        success : result
+      };
+
+    }catch(e){
+      console.log(e);
+      throw new HttpException(e.message, e.status);
+    }
+  }
+
+
+  @Post('verSolicitudes')
+  async findAllSolicitudes(
+    @Body('idorganizacion') idOrganizacion : string
+  ){
+    try{
+
+      const result = await this.organizacionService.findAllPetRequest(idOrganizacion);
+      return{
+        status : HttpStatus.OK,
+        message : "success",
+        pets : result
+      }
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+    }
+  }
+
+
+  @Post('solicitudPorMascota')
+  async findRequestByPet(
+    @Body('idMascota') idmascota : number
+  ){
+
+    try{
+      const response =  await this.organizacionService.fidRequestByPet(idmascota);
+
+      return {
+        status : HttpStatus.OK,
+        request : response
+      }
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+    }
+
   }
 
 

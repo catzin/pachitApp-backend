@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDate, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDate, IsDateString, IsNumber } from 'class-validator';
 
 export class CreateRecordatorioDto {
   @IsNotEmpty()
@@ -9,10 +9,14 @@ export class CreateRecordatorioDto {
   @IsString()
   descripcion: string;
 
-
   @IsDateString()
   fechaCreacion: string;
 
+  @IsDateString()
+  fechaEvento : string;
+
+  @IsNumber()
+  vencido : number;
 
   @IsNotEmpty()
   @IsString()

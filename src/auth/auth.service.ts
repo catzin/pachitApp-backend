@@ -84,14 +84,15 @@ export class AuthService {
   //Logea un Usario
   async login(loginUserDto: LoginUserDto) {
 
-    const { contrasena, correo } = loginUserDto; //Como extraer y trabajar con caractesticas del DTO
+    console.log('imprime desde auth login',loginUserDto);
 
+    const { contrasena, correo } = loginUserDto; //Como extraer y trabajar con caractesticas del DTO
+    
     const user = await this.userRepository.findOne({
       where: { correo : correo },
       relations : ['tipoUsuario_idTipoUsuario'],
       
     });
-
   
     if (!user){
       throw new NotFoundException('User not found');

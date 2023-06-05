@@ -15,6 +15,11 @@ export class Recordatorio {
   @Column()
   fechaCreacion: Date;
 
+  @Column()
+  fechaEvento: Date;
+  
+  @Column()
+  vencido : number;
 
   @ManyToOne(() => Organizacion)
   @JoinColumn({ name: 'id_organizacion' })

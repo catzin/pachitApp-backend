@@ -4,6 +4,8 @@ import { Logger,ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 
 
 
@@ -25,6 +27,8 @@ async function bootstrap() {
     }),
   );
 
+  app.use(bodyParser.json());
+  app.use(cors());
   await app.listen(3001);
   logger.log(`Server is running in ${await app.getUrl()}`);
 

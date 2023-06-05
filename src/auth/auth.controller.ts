@@ -21,12 +21,23 @@ export class AuthController {
 
   
   @Post('register')
-  registerUser(@Body() createUserDto: CreateUserDto){
-    return this.authService.create(createUserDto);
+  async registerUser(@Body() createUserDto: CreateUserDto){
+    try{
+
+      const result = await this.authService.create(createUserDto);
+      return result;
+
+    }catch(e){
+     
+      throw new HttpException(e.message, e.status);
+
+    }
+    
   }
 
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto){
+    
     return this.authService.login(loginUserDto);
   }
 
@@ -103,11 +114,13 @@ export class AuthController {
       );
     }
 
-    const jwt = await this.authService.loginGoogle(req.user);
+    //const jwt = await this.authService.loginGoogle(req.user);
     
-    res.set('authorization', jwt.access_token);
+    // res.set('authorization', jwt.access_token);
 
-    res.json(req.user);
+    // res.json(req.user);
+
+    res.redirect('https://accounts.google.com');
     
   }
 

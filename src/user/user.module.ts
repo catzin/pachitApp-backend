@@ -12,12 +12,17 @@ import { Ubicacion } from './entity/ubicacion.entity';
 import { HorarioContacto } from './entity/horario-contacto.entity';
 import { MascotaFavorita } from 'src/mascota/entities/mascota-favorita.entity';
 import { S3Module } from 'src/s3/s3.module';
+import { Referencia } from './entity/referencia.entity';
+import { RelationShip } from 'src/catalogs/entities/relationShip.entity';
+import { Firma } from './entity/firma.entity';
+import { Domicilio } from './entity/domicilio.entity';
+import { Documento } from './entity/documento.entity';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService,TypeOrmModule,],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita]),AuthModule, S3Module],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita,Referencia,RelationShip,Firma,Documento,Domicilio]),AuthModule, S3Module],
   
 })
 export class UserModule {}

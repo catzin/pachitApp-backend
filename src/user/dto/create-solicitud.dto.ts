@@ -11,6 +11,9 @@ export class CreateSolicitudAdopcionDto{
 
     @IsString()
     usuario: string;
+
+    @IsString()
+    motivo : string;
   
 
 }

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { DataSource, Equal, FindOneOptions, Repository } from 'typeorm';
@@ -18,6 +18,8 @@ import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { Recordatorio } from './entitites/recordatorio.entity';
 import { PetAge } from 'src/catalogs/entities';
 import { S3Service } from 'src/s3/s3.service';
+import { Usuario } from 'src/user/entity/usuario.entity';
+import { Firma } from 'src/user/entity/firma.entity';
 
 
 @Injectable()
@@ -45,7 +47,15 @@ export class OrganizacionService {
         private readonly dataSource: DataSource,
         @InjectRepository(PetAge)
         private readonly petAgeRepository : Repository<PetAge>,
-        private readonly s3Service : S3Service
+        private readonly s3Service : S3Service,
+        @InjectRepository(Usuario)
+        private readonly userRepository : Repository<Usuario>,
+        @InjectRepository(Firma)
+        private readonly firmaRepository : Repository<Firma>,
+        @InjectRepository(SolicitudAdopcion)
+        private readonly solicitudesRepository : Repository<SolicitudAdopcion>,
+        @InjectRepository(Usuario)
+        private readonly usuarioRepository : Repository<Usuario>,
     ) { }
 
 
@@ -214,16 +224,24 @@ export class OrganizacionService {
     //VER MASCOTA POR ID
     async findMascotasbyId(idmascota: number) {
 
-        let mascota: Mascota;
 
-        mascota = await this.mascotaRepository.findOneBy({ id: idmascota })
+
+        const mascota = await this.mascotaRepository.findOne({
+            where : {id : idmascota},
+            relations: {
+                mascotaImgs : true,
+                caracteristicas : true,
+                tipoMascota_idtipoMascota:true,
+                tipoRaza_idtipoRaza:true,
+                nivelActividad_idnivelActividad:true,
+                edad : true
+
+            }
+        });
 
 
         if (!mascota) {
-            return {
-                status: HttpStatus.UNAUTHORIZED,
-                message: 'No se encuentra la mascota'
-            };
+            throw new NotFoundException('No se encuentra la mascota');
         }
 
         return mascota
@@ -334,7 +352,9 @@ export class OrganizacionService {
             
             const saved =  await this.mascotaRepository.save(newMascota);
 
-            return saved;
+            const {organizacion, ...petWitouthOrg} = saved;
+
+            return petWitouthOrg;
         } catch (error) {
             console.log(error);
             return {
@@ -465,7 +485,7 @@ export class OrganizacionService {
 
         //Crear recordatorio de la organizacion
         async creaRecordatorio(recordatorio:CreateRecordatorioDto){
-
+            
             try {
       
               //Una vez encontrado el usuario
@@ -481,12 +501,18 @@ export class OrganizacionService {
               }
              
       
-              const newRecordatorio = this.recordatorioRepository.create({
+              const newRecordatorio = await this.recordatorioRepository.create({
                   ...recordatorio,
                   organizacion: organizacionFound,
               });
+
+              
       
-              return this.recordatorioRepository.save(newRecordatorio);
+              const saved =  await this.recordatorioRepository.save(newRecordatorio);
+
+              const {organizacion, ...data} = saved;
+
+              return data;
       
           } catch (error) {
             console.log(error);
@@ -509,8 +535,12 @@ export class OrganizacionService {
                 const organizacionFound = await this.organizacionRepository.findOne({
                     where:{
                     idorganizacion:term
-                    }
+                }
             });
+
+            if(!organizacionFound){
+                throw new NotFoundException('Organizacion not found');
+            }
     
             const recordatoriosFound = await this.recordatorioRepository.find({
                 where : {
@@ -518,11 +548,149 @@ export class OrganizacionService {
                 }
             });
     
-            return recordatoriosFound;
+            return {
+                status : HttpStatus.OK,
+                message : "Success",
+                recordatoriosFound
+            };
     
             }
-        
+    
         }  
+
+        async findMyOrg(idusuario : string){
+            const orgFound = await this.organizacionRepository.findOne({
+                where : {usuario : { idusuario : idusuario} }
+            });
+
+            if(!orgFound){
+                new NotFoundException('El usuario no cuenta con una organización');
+            }
+
+            return orgFound;
+        }
+
+
+        async uploadSignature(idusuario : string,file: Express.Multer.File){
+            console.log(file);
+            const user = await this.userRepository.findOne({
+                where : { idusuario : idusuario}
+            });
+
+       
+
+            if(!user){
+                throw new NotFoundException('Usuario no válido');
+            }
+
+            const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
+            const urlResult = await this.s3Service.uploadFile(file,key);
+
+            const created = await this.firmaRepository.create({
+                path : urlResult,
+                usuario : user
+            
+            });
+
+            const resultCreated = await this.firmaRepository.save(created);
+
+            if(!resultCreated){
+                return -1;
+            }
+            else{
+                return 1;
+            }
+
+        }
+
+        async findAllPetRequest(idOrganizacion : string){
+
+            
+            const petitions = await this.solicitudesRepository.createQueryBuilder('solicitudAdopcion')
+                .innerJoin('solicitudAdopcion.mascota', 'mascota')
+                .innerJoin('mascota.organizacion', 'organizacion')
+                .select(['mascota.id', 'mascota.nombre'])
+                .where('organizacion.idorganizacion = :idOrganizacion', { idOrganizacion })
+                .groupBy('mascota.id')
+                .addGroupBy('mascota.nombre')
+                .getRawMany();
+
+            return petitions;
+        }
+
+    async updateShelterProfilePicture(file: Express.Multer.File, idorganizacion: string, type: number) {
+
+
+        const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
+        const imageUrl = await this.s3Service.uploadFile(file, key);
+
+        if (type === 0) {
+            const user = await this.organizacionRepository.update(
+                { idorganizacion: idorganizacion },
+                { fotoPerfil: imageUrl }
+            );
+
+
+            if (!user) {
+                throw new NotFoundException(
+                    "ID no válido",
+                );
+            }
+        }
+        else {
+
+            const user = await this.organizacionRepository.update(
+                { idorganizacion: idorganizacion },
+                { fotoPortada: imageUrl }
+            );
+
+
+            if (!user) {
+                throw new NotFoundException(
+                    "ID no válido",
+                );
+            }
+
+        }
+
+
+
+        return {
+            status: HttpStatus.OK,
+            imageUrl
+        }
+
+
+    }
+
+
+    async fidRequestByPet(idMascota : number){
+
+        const pets = await this.solicitudAdopcionRepository.find({
+            where : {
+                mascota : {id : idMascota} 
+            },
+            relations: [
+                'usuario',  
+                'usuario.ubicacion',
+                'usuario.contactosReferencia',
+                'usuario.firmas',
+                'usuario.horariocontacto',
+                //'usuario.documentacionImage',
+
+            ],
+
+        });
+
+
+        if(!pets){
+            throw new BadRequestException('No existen solicitudes');
+        }
+
+
+        return pets;
+
+    }
             
 
 }

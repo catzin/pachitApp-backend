@@ -46,7 +46,10 @@ export class CreateMascotaDto{
   images?:string[];
 
   @IsNotEmpty()
-  idOrganizacion : string
+  idOrganizacion : string;
+
+  @IsNotEmpty()
+  secureDisable : number;
 
 
 }

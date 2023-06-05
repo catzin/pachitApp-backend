@@ -40,6 +40,10 @@ import { UserService } from './user/user.service';
 import { GoogleController } from './google/google.controller';
 import { GoogleService } from './google/google.service';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { Referencia } from './user/entity/referencia.entity';
+import { Firma } from './user/entity/firma.entity';
+import { Domicilio } from './user/entity/domicilio.entity';
+import { Documento } from './user/entity/documento.entity';
 
 
 
@@ -86,7 +90,12 @@ import { MailerModule } from '@nestjs-modules/mailer';
         HorarioContacto, 
         Recordatorio,
         PetAge,
-        MascotaFavorita],
+        Referencia,
+        MascotaFavorita,
+        Firma,
+        Documento,
+        Domicilio
+      ],
       synchronize: true
     }),
     

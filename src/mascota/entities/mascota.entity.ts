@@ -50,6 +50,9 @@ export class Mascota {
   @JoinColumn({ name: 'idnivelActividad' })
   nivelActividad_idnivelActividad: NivelActividad;
 
+  @Column()
+  secureDisable : number;
+
   @ManyToMany(() => Caracteristica)
   @JoinTable({
     name:'caracteristicas'

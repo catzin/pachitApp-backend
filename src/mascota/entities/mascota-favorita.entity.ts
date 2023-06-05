@@ -7,9 +7,6 @@ export class MascotaFavorita{
 
     @PrimaryGeneratedColumn()
     idMascotaUsuario: number
-
-
-
     @ManyToOne(() => Mascota, (mascota) => mascota.mascotaFavorita)
     mascota: Mascota
 
