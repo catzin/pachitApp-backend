@@ -11,6 +11,7 @@ import { MascotaFavorita } from './mascota-favorita.entity';
 import { PetAge } from 'src/catalogs/entities';
 import { Adopcion } from './adopcion.entity';
 import { TiempoSeguimiento } from './tiempo-seguimiento';
+import { incidente } from './incidente.entity';
 //import { MascotaImagenn } from './mascotaImg.entity';
 
 
@@ -87,6 +88,8 @@ export class Mascota {
 
   @OneToMany(() => Adopcion, adopcion => adopcion.mascota)
   adopciones: Adopcion[];
+  @OneToMany(() => incidente , incidente => incidente.mascota)
+  incidencias : incidente[]
  
 
  

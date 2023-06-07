@@ -9,6 +9,7 @@ import { NivelActividad } from './entities/nivel-actividad.entity';
 import { SolicitudAdopcion } from './entities/solicitud-adopcion.entity';
 import { MascotaFavorita } from './entities/mascota-favorita.entity';
 import { Adopcion } from './entities/adopcion.entity';
+import { incidente } from './entities/incidente.entity';
 //import { MascotaImagenn } from './entities/mascotaImg.entity';
 import { MascotaService } from './mascota.service';
 import { Usuario } from 'src/user/entity/usuario.entity';
@@ -19,10 +20,12 @@ import { Seguimiento } from './entities/seguimiento.entity';
 
 
 @Module({
-    imports: [AuthModule,TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,Usuario,SolicitudAdopcion,Organizacion,TiempoSeguimiento,Seguimiento])],
-    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,TiempoSeguimiento,Seguimiento])],
+    imports: [AuthModule,TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,Usuario,SolicitudAdopcion,Organizacion,TiempoSeguimiento,Seguimiento,incidente])],
+    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,TiempoSeguimiento,Seguimiento,incidente])],
     providers: [MascotaService],
     controllers: [MascotaController]
+    // imports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,incidente])],
+    // exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,incidente])]
 
 
 })

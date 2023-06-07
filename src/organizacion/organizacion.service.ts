@@ -20,6 +20,8 @@ import { PetAge } from 'src/catalogs/entities';
 import { S3Service } from 'src/s3/s3.service';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { Firma } from 'src/user/entity/firma.entity';
+import { IncidenciaDto } from './dto/create-incidencia.dto';
+import { incidente } from 'src/mascota/entities/incidente.entity';
 
 
 @Injectable()
@@ -46,35 +48,37 @@ export class OrganizacionService {
         private readonly solicitudAdopcionRepository: Repository<SolicitudAdopcion>,
         private readonly dataSource: DataSource,
         @InjectRepository(PetAge)
-        private readonly petAgeRepository : Repository<PetAge>,
-        private readonly s3Service : S3Service,
+        private readonly petAgeRepository: Repository<PetAge>,
+        private readonly s3Service: S3Service,
         @InjectRepository(Usuario)
-        private readonly userRepository : Repository<Usuario>,
+        private readonly userRepository: Repository<Usuario>,
         @InjectRepository(Firma)
-        private readonly firmaRepository : Repository<Firma>,
+        private readonly firmaRepository: Repository<Firma>,
         @InjectRepository(SolicitudAdopcion)
-        private readonly solicitudesRepository : Repository<SolicitudAdopcion>,
+        private readonly solicitudesRepository: Repository<SolicitudAdopcion>,
         @InjectRepository(Usuario)
-        private readonly usuarioRepository : Repository<Usuario>,
+        private readonly usuarioRepository: Repository<Usuario>,
+        @InjectRepository(incidente)
+        private readonly incidenteRepository: Repository<incidente>,
     ) { }
 
 
-    async GetCaracts(){
-       const caracters = await this.caracteristicaRepository.find();
-       return caracters;
+    async GetCaracts() {
+        const caracters = await this.caracteristicaRepository.find();
+        return caracters;
     }
 
-    async findRazaType(){
+    async findRazaType() {
         const raza = await this.tipoRazaRepository.find();
         return raza;
     }
 
-    async findPetTypes(){
+    async findPetTypes() {
         const types = await this.tipoMascotaRepository.find();
         return types;
-     }
-    
-    async findActivityLevels(){
+    }
+
+    async findActivityLevels() {
         const leves = await this.nivelActividadRepository.find();
         return leves;
     }
@@ -112,8 +116,8 @@ export class OrganizacionService {
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true,
-                edad : true
-             
+                edad: true
+
 
             },
             where: {
@@ -141,7 +145,7 @@ export class OrganizacionService {
                 caracteristicas: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true,
-                edad : true
+                edad: true
 
             },
             where: {
@@ -169,7 +173,7 @@ export class OrganizacionService {
                 caracteristicas: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true,
-                edad : true
+                edad: true
             },
             where: {
                 nivelActividad_idnivelActividad: nivelActividadd,
@@ -193,7 +197,7 @@ export class OrganizacionService {
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true,
-                edad : true
+                edad: true
             }
         });
 
@@ -213,12 +217,12 @@ export class OrganizacionService {
                 tipoMascota_idtipoMascota: true,
                 tipoRaza_idtipoRaza: true,
                 nivelActividad_idnivelActividad: true,
-                edad : true
+                edad: true
             },
             where: { organizacion: { idorganizacion } }
         });
 
-        return  result;
+        return result;
     }
 
     //VER MASCOTA POR ID
@@ -227,14 +231,14 @@ export class OrganizacionService {
 
 
         const mascota = await this.mascotaRepository.findOne({
-            where : {id : idmascota},
+            where: { id: idmascota },
             relations: {
-                mascotaImgs : true,
-                caracteristicas : true,
-                tipoMascota_idtipoMascota:true,
-                tipoRaza_idtipoRaza:true,
-                nivelActividad_idnivelActividad:true,
-                edad : true
+                mascotaImgs: true,
+                caracteristicas: true,
+                tipoMascota_idtipoMascota: true,
+                tipoRaza_idtipoRaza: true,
+                nivelActividad_idnivelActividad: true,
+                edad: true
 
             }
         });
@@ -253,7 +257,7 @@ export class OrganizacionService {
             where: { usuario: { idusuario: idUsuario } },
             relations: ['usuario'],
         };
- 
+
         const result = await this.organizacionRepository.findOne(options);
 
         return result.idorganizacion;
@@ -263,18 +267,18 @@ export class OrganizacionService {
     //Crea mascota
     async createMascota(createMascotaDto: CreateMascotaDto, files: Express.Multer.File[]) {
         try {
-            
-           
+
+
             const { ...mascotaDetails } = createMascotaDto;
 
             //Busca el id de la organizacion para ver si le puede asociar una mascota   
             const organizacionFound = await this.organizacionRepository.findOne({
                 where: {
-                    idorganizacion : createMascotaDto.idOrganizacion.toString()
-                  
+                    idorganizacion: createMascotaDto.idOrganizacion.toString()
+
                 },
             });
-      
+
             //Idea crear ottra constante que almacene algo tipo "newImagenMascota" 
             if (!organizacionFound) {
                 return {
@@ -320,9 +324,9 @@ export class OrganizacionService {
                 keys.push(`${e.originalname.split('.')[0]}${Date.now()}.${e.originalname.split('.')[1]}`);
 
             });
-       
-            const imagesUrl = await this.s3Service.uploadFiles(files,keys);
-            imagesUrl.forEach((imag,index) => {
+
+            const imagesUrl = await this.s3Service.uploadFiles(files, keys);
+            imagesUrl.forEach((imag, index) => {
 
                 const newImagen = this.imagenesRepository.create({
                     fechaSubida: new Date(),
@@ -331,10 +335,10 @@ export class OrganizacionService {
                 });
                 // Crea una instancia de Imagen
                 imagesFinal.push(newImagen)
-                
+
 
             });
-           
+
             await this.imagenesRepository.save(imagesFinal);
 
             //Constante donde crea una mascota
@@ -349,10 +353,10 @@ export class OrganizacionService {
                 edad: edadCreate
 
             });
-            
-            const saved =  await this.mascotaRepository.save(newMascota);
 
-            const {organizacion, ...petWitouthOrg} = saved;
+            const saved = await this.mascotaRepository.save(newMascota);
+
+            const { organizacion, ...petWitouthOrg } = saved;
 
             return petWitouthOrg;
         } catch (error) {
@@ -368,7 +372,7 @@ export class OrganizacionService {
     //UPDATE MASCOTA CON IMAGENES
     async updateMascota(id: number, updateMascotaDto: UpdateMascotaDto) {
 
-        const { images, edad ,...mascotaDetails } = updateMascotaDto;
+        const { images, edad, ...mascotaDetails } = updateMascotaDto;
 
 
         const mascotafound = await this.mascotaRepository.findOne({
@@ -445,23 +449,23 @@ export class OrganizacionService {
         }
     }
 
-    async verEstatusMascotas(verMascotasDto:VerMascotasDto){
- 
-    //Busca el id de la organizacion para ver si le puede asociar una mascota   
+    async verEstatusMascotas(verMascotasDto: VerMascotasDto) {
+
+        //Busca el id de la organizacion para ver si le puede asociar una mascota   
         const organizacionFound = await this.organizacionRepository.findOne({
             where: {
-                idorganizacion:verMascotasDto.organizacion
+                idorganizacion: verMascotasDto.organizacion
             },
         });
 
-    //Idea crear ottra constante que almacene algo tipo "newImagenMascota" 
+        //Idea crear ottra constante que almacene algo tipo "newImagenMascota" 
         if (!organizacionFound) {
             return {
                 status: HttpStatus.UNAUTHORIZED,
                 message: 'No se encuentra la organizacion'
             };
         }
-        
+
 
 
         const mascotas = this.mascotaRepository.find({
@@ -470,12 +474,12 @@ export class OrganizacionService {
                     usuario: true
                 }
             },
-            where: { 
+            where: {
                 organizacion: organizacionFound
-             }
+            }
         });
 
-        
+
 
         return mascotas;
 
@@ -483,140 +487,158 @@ export class OrganizacionService {
     }
 
 
-        //Crear recordatorio de la organizacion
-        async creaRecordatorio(recordatorio:CreateRecordatorioDto){
-            
-            try {
-      
-              //Una vez encontrado el usuario
-              const organizacionFound = await this.organizacionRepository.findOne({
-                  where: {
-                      idorganizacion:recordatorio.organizacion_idorganizacion
-                  },
-              });
-      
-              if (!organizacionFound) {
+    //Crear recordatorio de la organizacion
+    async creaRecordatorio(recordatorio: CreateRecordatorioDto) {
+
+        try {
+
+            //Una vez encontrado el usuario
+            const organizacionFound = await this.organizacionRepository.findOne({
+                where: {
+                    idorganizacion: recordatorio.organizacion_idorganizacion
+                },
+            });
+
+            if (!organizacionFound) {
                 throw new NotFoundException('Organizacion not found');
-      
-              }
-             
-      
-              const newRecordatorio = await this.recordatorioRepository.create({
-                  ...recordatorio,
-                  organizacion: organizacionFound,
-              });
 
-              
-      
-              const saved =  await this.recordatorioRepository.save(newRecordatorio);
+            }
 
-              const {organizacion, ...data} = saved;
 
-              return data;
-      
-          } catch (error) {
+            const newRecordatorio = await this.recordatorioRepository.create({
+                ...recordatorio,
+                organizacion: organizacionFound,
+            });
+
+
+
+            const saved = await this.recordatorioRepository.save(newRecordatorio);
+
+            const { organizacion, ...data } = saved;
+
+            return data;
+
+        } catch (error) {
             console.log(error);
-              return {
-                  status: HttpStatus.INTERNAL_SERVER_ERROR,
-                  message: 'Please check server logs',
-              };
-          }
-          }
-      
+            return {
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Please check server logs',
+            };
+        }
+    }
 
 
-        //GET ALL RECORDATORIOS POR ORGANIZACION
-        async finAllRecordatorios(term:string) {       
-    
-            //aqui se hace la validacion para ver por donde busca
-            if( isUUID(term) ){
-    
-    
-                const organizacionFound = await this.organizacionRepository.findOne({
-                    where:{
-                    idorganizacion:term
+
+    //GET ALL RECORDATORIOS POR ORGANIZACION
+    async finAllRecordatorios(term: string) {
+
+        //aqui se hace la validacion para ver por donde busca
+        if (isUUID(term)) {
+
+
+            const organizacionFound = await this.organizacionRepository.findOne({
+                where: {
+                    idorganizacion: term
                 }
             });
 
-            if(!organizacionFound){
+            if (!organizacionFound) {
                 throw new NotFoundException('Organizacion not found');
             }
-    
+
             const recordatoriosFound = await this.recordatorioRepository.find({
-                where : {
-                organizacion : organizacionFound
+                where: {
+                    organizacion: organizacionFound
                 }
             });
-    
+
             return {
-                status : HttpStatus.OK,
-                message : "Success",
+                status: HttpStatus.OK,
+                message: "Success",
                 recordatoriosFound
             };
+
+        }
+
+    }
+
+    async findMyOrg(idusuario: string) {
+        const orgFound = await this.organizacionRepository.findOne({
+            where: { usuario: { idusuario: idusuario } }
+        });
+
+        if (!orgFound) {
+            new NotFoundException('El usuario no cuenta con una organización');
+        }
+
+        return orgFound;
+    }
+
+
+    async uploadSignature(idusuario: string, file: Express.Multer.File) {
+        console.log(file);
+        const user = await this.userRepository.findOne({
+            where: { idusuario: idusuario }
+        });
+
+
+
+        if (!user) {
+            throw new NotFoundException('Usuario no válido');
+        }
+
+        const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
+        const urlResult = await this.s3Service.uploadFile(file, key);
+
+        const created = await this.firmaRepository.create({
+            path: urlResult,
+            usuario: user
+
+        });
+
+        const resultCreated = await this.firmaRepository.save(created);
+
+        if (!resultCreated) {
+            return -1;
+        }
+        else {
+            return 1;
+        }
+
+    }
+
+    async findAllPetsWithRequest(idusuario: string) {
+
+        const user = await this.userRepository.findOne({
+            where : { idusuario : idusuario},
+            relations : { 
+                organizacion : true
+            }
+        });
+
+        if(!user){
+            throw new NotFoundException();
+        }
+
+        const idOrganizacion = user.organizacion.idorganizacion;
+
+        const petitions = await this.solicitudesRepository.createQueryBuilder('solicitudAdopcion')
+            .innerJoin('solicitudAdopcion.mascota', 'mascota')
+            .innerJoin('mascota.organizacion', 'organizacion')
+            .select(['mascota.id', 'mascota.nombre'])
+            .where('organizacion.idorganizacion = :idOrganizacion', { idOrganizacion })
+            .groupBy('mascota.id')
+            .addGroupBy('mascota.nombre')
+            .getRawMany();
+
+        console.log(petitions);
     
-            }
-    
-        }  
 
-        async findMyOrg(idusuario : string){
-            const orgFound = await this.organizacionRepository.findOne({
-                where : {usuario : { idusuario : idusuario} }
-            });
+        return petitions;
 
-            if(!orgFound){
-                new NotFoundException('El usuario no cuenta con una organización');
-            }
+        
 
-            return orgFound;
-        }
-
-
-        async uploadSignature(idusuario : string,file: Express.Multer.File){
-            console.log(file);
-            const user = await this.userRepository.findOne({
-                where : { idusuario : idusuario}
-            });
-
-       
-
-            if(!user){
-                throw new NotFoundException('Usuario no válido');
-            }
-
-            const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
-            const urlResult = await this.s3Service.uploadFile(file,key);
-
-            const created = await this.firmaRepository.create({
-                path : urlResult,
-                usuario : user
-            
-            });
-
-            const resultCreated = await this.firmaRepository.save(created);
-
-            if(!resultCreated){
-                return -1;
-            }
-            else{
-                return 1;
-            }
-
-        }
-
-        async findAllPetRequest(idOrganizacion : string){
-
-            
-            const petitions = await this.solicitudesRepository.createQueryBuilder('solicitudAdopcion')
-                .innerJoin('solicitudAdopcion.mascota', 'mascota')
-                .innerJoin('mascota.organizacion', 'organizacion')
-                .select(['mascota.id', 'mascota.nombre'])
-                .where('organizacion.idorganizacion = :idOrganizacion', { idOrganizacion })
-                .groupBy('mascota.id')
-                .addGroupBy('mascota.nombre')
-                .getRawMany();
-
-            return petitions;
-        }
+    }
 
     async updateShelterProfilePicture(file: Express.Multer.File, idorganizacion: string, type: number) {
 
@@ -664,18 +686,20 @@ export class OrganizacionService {
     }
 
 
-    async fidRequestByPet(idMascota : number){
+    async fidRequestByPet(idMascota: number) {
 
         const pets = await this.solicitudAdopcionRepository.find({
-            where : {
-                mascota : {id : idMascota} 
+            where: {
+                mascota: { id: idMascota }
             },
             relations: [
-                'usuario',  
+                'usuario',
                 'usuario.ubicacion',
                 'usuario.contactosReferencia',
                 'usuario.firmas',
                 'usuario.horariocontacto',
+                'usuario.domicilio',
+              
                 //'usuario.documentacionImage',
 
             ],
@@ -683,7 +707,7 @@ export class OrganizacionService {
         });
 
 
-        if(!pets){
+        if (!pets) {
             throw new BadRequestException('No existen solicitudes');
         }
 
@@ -691,7 +715,85 @@ export class OrganizacionService {
         return pets;
 
     }
-            
+
+    async findAllIncidences(idmascota: number) {
+
+        const incidences = await this.incidenteRepository.find({
+            where: {
+                mascota: { id: idmascota }
+            },
+
+        });
+
+        if (!incidences) {
+            throw new NotFoundException();
+        }
+
+        return incidences;
+
+    }
+
+    async petByUser(idusuario: string) {
+
+        const userPets = await this.organizacionRepository.findOne({
+            where: { usuario: { idusuario: idusuario } },
+            relations: {
+                mascotas: true
+            }
+        });
+
+        if (!userPets) {
+            throw new NotFoundException();
+        }
+        const { mascotas } = userPets;
+
+        return mascotas;
+
+    }
+
+    async findAleatoryImage(idmascota: number) {
+
+        const pet = await this.mascotaRepository.findOne({
+            where: { id: idmascota },
+            relations: { mascotaImgs: true }
+        });
+
+        const { mascotaImgs } = pet;
+
+        return mascotaImgs[0].path;
+    }
+
+
+    async uploadIncidence(data: IncidenciaDto) {
+
+        const pet = await this.mascotaRepository.findOne({
+            where: { id: data.idmascota }
+        });
+
+        if (!pet) {
+            throw new NotFoundException();
+        }
+
+
+        const incidence = await this.incidenteRepository.create({
+
+            gasto: data.gasto,
+            descripcion: data.motivo,
+            fechaCreacion: data.fecha,
+            mascota: pet,
+
+        });
+
+
+        const saved = await this.incidenteRepository.save(incidence);
+
+        return saved;
+
+
+
+
+    }
+
 
 }
 

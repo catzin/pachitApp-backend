@@ -8,6 +8,7 @@ import { VerMascotasDto } from './dto/ver-mascotas.dto';
 import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
+import { IncidenciaDto } from './dto/create-incidencia.dto';
 
 
 @Controller('organizacion')
@@ -269,13 +270,13 @@ export class OrganizacionController {
   }
 
 
-  @Post('verSolicitudes')
+  @Post('verMascotasConSolicitudes')
   async findAllSolicitudes(
-    @Body('idorganizacion') idOrganizacion : string
+    @Body('idusuario') idusuario : string
   ){
     try{
 
-      const result = await this.organizacionService.findAllPetRequest(idOrganizacion);
+      const result = await this.organizacionService.findAllPetsWithRequest(idusuario);
       return{
         status : HttpStatus.OK,
         message : "success",
@@ -306,6 +307,82 @@ export class OrganizacionController {
     }
 
   }
+
+  @Post('listarIncidencias')
+  async findIncidences(
+    @Body('idmascota') idmascota : number
+  ){
+
+    try{
+
+      const result = await this.organizacionService.findAllIncidences(idmascota);
+      return {
+        status : HttpStatus.OK,
+        incidencias : result
+      }
+      
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+
+    }
+
+  }
+
+  @Post('imagenAleatoriaMascota')
+  async getAleatoryImage(
+    @Body('idmascota') idmascota : number
+  ){
+    try{
+      const result = await this.organizacionService.findAleatoryImage(idmascota);
+      return{
+        status : HttpStatus.OK,
+        image : result
+      }
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+
+    }
+
+  }
+
+  @Post('crearIncidencia')
+  async uploadIncidence(
+    @Body() incidencia : IncidenciaDto
+  ){
+    try{
+
+      const result = await this.organizacionService.uploadIncidence(incidencia);
+
+      return { 
+        status : HttpStatus.OK,
+        result
+      }
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+    }
+
+  }
+
+  @Post('petsByUser')
+  async findPetsByUser(
+    @Body('idusuario') idusuario : string
+  ){
+
+    try{
+
+      const result = await this.organizacionService.petByUser(idusuario);
+      return {
+        status : HttpStatus.OK,
+        pets : result
+      }
+
+    }catch(e){
+      throw new HttpException(e.message, e.status);
+    }
+  }
+
 
 
 

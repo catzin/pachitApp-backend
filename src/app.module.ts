@@ -50,6 +50,7 @@ import { MascotaService } from './mascota/mascota.service';
 import { AppService } from './app.service';
 import { Seguimiento } from './mascota/entities/seguimiento.entity';
 import { ImagenSeguimiento } from './user/entity/imagen-seguimiento.entity';
+import { incidente } from './mascota/entities/incidente.entity';
 
 
 
@@ -72,7 +73,7 @@ import { ImagenSeguimiento } from './user/entity/imagen-seguimiento.entity';
       port: 3306,
       username: 'admin',
       password: 'm9IkWP47PjXDFwwS1LyS',
-      database: 'pachiDBTest',
+      database: 'pachiDB',
       entities: [
         Usuario, 
         civilState, 
@@ -105,7 +106,10 @@ import { ImagenSeguimiento } from './user/entity/imagen-seguimiento.entity';
         Adopcion,
         TiempoSeguimiento,
         Seguimiento,
-        ImagenSeguimiento],
+        ImagenSeguimiento,
+        Domicilio,
+        incidente
+      ],
       synchronize: true
     }),
     
