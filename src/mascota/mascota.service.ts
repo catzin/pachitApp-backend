@@ -10,6 +10,7 @@ import { Adopcion } from './entities/adopcion.entity';
 import { ChangeEstatusMascotaDto } from './dto/change-estatus-mascota.dto';
 import { ChangeEstatusSolicitudDto } from './dto/change-estatus-solicitud.dto';
 import { TiempoSeguimiento } from './entities/tiempo-seguimiento';
+import { Seguimiento } from './entities/seguimiento.entity';
 
 @Injectable()
 export class MascotaService {
@@ -27,6 +28,8 @@ export class MascotaService {
         private readonly adopcionRepository: Repository<Adopcion>,
         @InjectRepository(TiempoSeguimiento)
         private readonly tipoSeguimientoRepository: Repository<TiempoSeguimiento>,
+        @InjectRepository(Seguimiento)
+        private readonly seguimientoRepository: Repository<Seguimiento>,
       ) {}
 
 
@@ -102,10 +105,18 @@ export class MascotaService {
           organizacion:organziacionFound,
           usuario:userFound,
           mascota:mascotaFound,
-          fechaAdopcion:createAdopcionDto.fechaAdopcion
+          fechaAdopcion:createAdopcionDto.fechaAdopcion,
+          tipoSeguimiento_idTiempoSeguimiento:createAdopcionDto.tipoSeguimiento
         });
 
         const adopcionSaved = await this.adopcionRepository.save(newAdopcion);
+
+        const tipoSeguimiento = await this.tipoSeguimientoRepository.findOne({
+          where: { idTiempoSeguimiento: createAdopcionDto.tipoSeguimiento },
+        });
+        //Calcule y rellene siguientes fechas en tabla seguimiento
+        await this.generarFechasSeguimiento(adopcionSaved, createAdopcionDto.tipoSeguimiento, createAdopcionDto.frecuencia);
+        
 
         
         return {
@@ -122,6 +133,85 @@ export class MascotaService {
 
     }
 
+    async generarFechasSeguimiento(adopcion: Adopcion, tipoSeguimientoId: number, cantidadFechas: number): Promise<void> {
+      const tipoSeguimiento = await this.tipoSeguimientoRepository.findOne({
+        where: { idTiempoSeguimiento: tipoSeguimientoId },
+      });
+    
+      if (tipoSeguimiento) {
+        const fechaCreacion = new Date(adopcion.fechaAdopcion);
+    
+        if (isNaN(fechaCreacion.getTime())) {
+          console.error('La fecha de creación no es válida:', adopcion.fechaAdopcion);
+          // Realiza alguna acción para manejar el caso de una fecha no válida
+          return;
+        }
+    
+        for (let i = 1; i <= cantidadFechas; i++) {
+          const fechaNotificacion = new Date(fechaCreacion.getTime() + i * tipoSeguimiento.dias * 24 * 60 * 60 * 1000);
+    
+          const seguimiento = this.seguimientoRepository.create({
+            adopcion: adopcion,
+            fechaNotificacion: fechaNotificacion,
+          });
+    
+          await this.seguimientoRepository.save(seguimiento);
+        }
+      }
+    }
+
+
+    // calcularFechasSeguimiento(fechaAdopcion: Date, cantidadSeguimientos: number, intervalo: 'meses' | 'semanas', periodo: number): Date[] {
+    //   let fechasSeguimiento: Date[] = [];
+
+    //   for (let i = 1; i <= cantidadSeguimientos; i++) {
+    //     let fechaSeguimiento = this.addTime(fechaAdopcion, periodo * i, intervalo);
+    //     fechasSeguimiento.push(fechaSeguimiento);
+    //   }
+
+    //   return fechasSeguimiento;
+    // }
+
+
+      // async addTime(fechaBase: Date, cantidad: number, unidad: 'dias' | 'semanas' | 'meses'): Date | undefined {
+      //     let fecha = new Date(fechaBase); // Crea una copia de la fecha base
+
+
+      //   //Busca que la solicitud sea estatus 3 con ese usuario y mascota
+      //   // const fechasFound = await this.tiempo.findOne({
+      //   //   where: {
+      //   //     usuario: userFound,
+      //   //     mascota: mascotaFound,
+      //   //     estatus: 3
+      //   //   }
+      //   // });
+
+      
+      //     switch (unidad) {
+      //         case 'dias':
+      //             fecha.setDate(fecha.getDate() + cantidad);
+      //             break;
+      //         case 'semanas':
+      //             fecha.setDate(fecha.getDate() + cantidad * 7);
+      //             break;
+      //         case 'meses':
+      //             fecha.setMonth(fecha.getMonth() + cantidad);
+      //             break;
+      //         default:
+      //             console.log('Unidad de tiempo no reconocida');
+      //             return;
+      //     }
+      
+      //     return fecha;
+      // }
+      
+      // let fechaBase = new Date();
+      
+      // console.log(addTime(fechaBase, 1, 'meses')); // Añade un mes
+      // console.log(addTime(fechaBase, 1, 'semanas')); // Añade una semana
+      // console.log(addTime(fechaBase, 3, 'meses')); // Añade tres meses
+
+  
 
      //Cambia el estatus de las mascotas 1-Adotpable 0-No Adoptable
      async cambiaEstatusMascota(changeEstatusMascotaDto:ChangeEstatusMascotaDto){
@@ -254,7 +344,7 @@ export class MascotaService {
 
           if (today.getTime() === fechaNotificacion15Dias.getTime()) {
             // Realizar acción para notificar a los usuarios después de 15 días
-            
+
             console.log('Notificar después de 15 días:', adopcion);
           }
     

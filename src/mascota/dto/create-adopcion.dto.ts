@@ -11,9 +11,14 @@ export class CreateAdopcionDto{
     @IsNumber()
     idmascota : number;
 
+    @IsNumber()
+    tipoSeguimiento : number;
+
     @IsDateString()
     fechaAdopcion: string;
-   
+    
+    @IsNumber()
+    frecuencia : number;
 
 
 

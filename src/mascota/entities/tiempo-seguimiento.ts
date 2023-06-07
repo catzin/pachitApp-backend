@@ -9,4 +9,7 @@ export class TiempoSeguimiento{
     @Column({ length: 45 })
     lapso : string;
 
+    @Column()
+    dias: number;
+
 }

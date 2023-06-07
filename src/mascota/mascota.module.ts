@@ -15,11 +15,12 @@ import { Usuario } from 'src/user/entity/usuario.entity';
 import { MascotaController } from './mascota.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { TiempoSeguimiento } from './entities/tiempo-seguimiento';
+import { Seguimiento } from './entities/seguimiento.entity';
 
 
 @Module({
-    imports: [AuthModule,TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,Usuario,SolicitudAdopcion,Organizacion,TiempoSeguimiento])],
-    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,TiempoSeguimiento])],
+    imports: [AuthModule,TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,Usuario,SolicitudAdopcion,Organizacion,TiempoSeguimiento,Seguimiento])],
+    exports: [TypeOrmModule.forFeature([Organizacion,Mascota,Caracteristica,TipoMascota,TipoRaza,NivelActividad,SolicitudAdopcion,MascotaFavorita,Adopcion,TiempoSeguimiento,Seguimiento])],
     providers: [MascotaService],
     controllers: [MascotaController]
 

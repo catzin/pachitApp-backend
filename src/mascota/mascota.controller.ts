@@ -12,8 +12,8 @@ export class MascotaController {
 
     //Acepta la adopcion de sus mascotas por organizacion
     @Post('adopcion')
-    @SetMetadata('roles','organizacion')
-    @UseGuards(AuthGuard(), UserRoleGuard)
+    // @SetMetadata('roles','organizacion')
+    // @UseGuards(AuthGuard(), UserRoleGuard)
     async createAdopcion(@Body() createAdopcionDto: CreateAdopcionDto) {
       return this.mascotaService.createAdopcion(createAdopcionDto);
     }

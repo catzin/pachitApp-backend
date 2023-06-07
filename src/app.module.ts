@@ -48,6 +48,8 @@ import { Adopcion } from './mascota/entities/adopcion.entity';
 import { TiempoSeguimiento } from './mascota/entities/tiempo-seguimiento';
 import { MascotaService } from './mascota/mascota.service';
 import { AppService } from './app.service';
+import { Seguimiento } from './mascota/entities/seguimiento.entity';
+import { ImagenSeguimiento } from './user/entity/imagen-seguimiento.entity';
 
 
 
@@ -58,7 +60,7 @@ import { AppService } from './app.service';
         host:'smtp.gmail.com',
         auth:{
           user:'pachidevelopers@gmail.com',
-          pass:'Holamundo11!'
+          pass:'xelqkoocqbqkbzcb'
         },
       }
     }),
@@ -101,7 +103,9 @@ import { AppService } from './app.service';
         Domicilio,     
         MascotaFavorita,
         Adopcion,
-        TiempoSeguimiento],
+        TiempoSeguimiento,
+        Seguimiento,
+        ImagenSeguimiento],
       synchronize: true
     }),
     

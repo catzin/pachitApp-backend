@@ -1,10 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 
 import { Mascota } from './mascota.entity';
 import { Usuario } from 'src/user/entity/usuario.entity';
 import { Organizacion } from 'src/organizacion/entitites/organizacion.entity';
 import { TiempoSeguimiento } from './tiempo-seguimiento';
 import { Imagenes } from './imagenes.entity';
+import { Peticion } from 'src/user/entity/peticion.entity';
+import { Seguimiento } from './seguimiento.entity';
+import { ImagenSeguimiento } from 'src/user/entity/imagen-seguimiento.entity';
 
 @Entity()
 export class Adopcion {
@@ -41,4 +44,13 @@ export class Adopcion {
     }
   })
   adopcionImgs: Imagenes[];
+
+
+      //Relaciones uno a uno
+      @OneToMany(type => Seguimiento, seguimiento => seguimiento.adopcion)
+      seguimiento: Seguimiento;
+
+      
+      @OneToMany(() => ImagenSeguimiento, imagenSeguimiento => imagenSeguimiento.adopcion)
+      imagenesSeguimiento: ImagenSeguimiento[];
 }

@@ -19,12 +19,14 @@ import { Domicilio } from './entity/domicilio.entity';
 import { Documento } from './entity/documento.entity';
 import { Adopcion } from 'src/mascota/entities/adopcion.entity';
 import { Imagenes } from 'src/mascota/entities/imagenes.entity';
+import { ImagenSeguimiento } from './entity/imagen-seguimiento.entity';
 
 @Module({
   controllers: [UserController],
   providers: [UserService],
-  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,MascotaFavorita,Referencia,RelationShip,Firma,Documento,Domicilio,Adopcion,Imagenes]),AuthModule, S3Module],
-  exports: [UserService,TypeOrmModule,TypeOrmModule.forFeature([Adopcion])],
+  imports: [TypeOrmModule.forFeature([Usuario,Organizacion,Peticion,Mascota,SolicitudAdopcion,Ubicacion,HorarioContacto,
+    MascotaFavorita,Referencia,RelationShip,Firma,Documento,Domicilio,Adopcion,Imagenes,ImagenSeguimiento]),AuthModule, S3Module],
+  exports: [UserService,TypeOrmModule,TypeOrmModule.forFeature([Adopcion,ImagenSeguimiento])],
   
 })
 export class UserModule {}

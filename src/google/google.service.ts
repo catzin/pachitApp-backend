@@ -50,7 +50,7 @@ export class GoogleService {
     sendEmail(sendEmailDto: SendEmailDto): void {
         this.mailerService.sendMail({
             to: sendEmailDto.email,
-            from: 'alex.iparrea.granados@gmail.com',
+            from: 'pachidevelopers@gmail.com',
             subject: 'Pruebas nodemailer',
             text: `Hola ${sendEmailDto.name}, bienvenido`,
             html: '<h1>Ya quedó genial</h1>'

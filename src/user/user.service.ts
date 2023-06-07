@@ -29,6 +29,7 @@ import { CreateHorarioDto } from './dto/create-horario.dto';
 import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
 import { Adopcion } from 'src/mascota/entities/adopcion.entity';
 import { Imagenes } from 'src/mascota/entities/imagenes.entity';
+import { ImagenSeguimiento } from './entity/imagen-seguimiento.entity';
 
 
 @Injectable()
@@ -66,6 +67,8 @@ export class UserService {
     private readonly adopcionRepository: Repository<Adopcion>,
     @InjectRepository(Imagenes)
     private readonly imagenesRepository: Repository<Imagenes>,
+    @InjectRepository(ImagenSeguimiento)
+    private readonly imagenSeguimientoRepository: Repository<ImagenSeguimiento>,
     private s3Service : S3Service
   ) {}
 
@@ -1093,6 +1096,8 @@ export class UserService {
       //Actualiza la adopcion el el tiempo de seguimiento
       adopcionFound.tipoSeguimiento_idTiempoSeguimiento = updateSeguimientoDto.tipoSeguimiento;
 
+      //Rellene la tabla seguimiento
+
       // Guardar los cambios en la base de datos
       await this.adopcionRepository.save(adopcionFound);
 
@@ -1104,57 +1109,58 @@ export class UserService {
 
     }
 
-    //Sube la foto de el seguimiento
-    async uploadSeguimientoPicture(file : Express.Multer.File, idUsuario : string ){
 
-      const user = await this.userRepository.findOneOrFail({
-        where : {idusuario : idUsuario},
 
-      })
 
-      if(!user){
-   
-        throw new HttpException(
-          "ID no válido",
-          400
-        );
+    async uploadImagenSeguimiento(idUsuario: string, file: Express.Multer.File) {
+      try {
+
+
+        //Busca el id del usuario
+        const adopcionFound = await this.adopcionRepository.findOne({
+          where: {
+            usuario: {idusuario:idUsuario}
+          },
+        });
+
+        if (!adopcionFound) {
+          return {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'No se encontro la adopcion',
+          };
+
+        }
+        
+
+        console.log(adopcionFound);
+  
+        let key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
+         
+     
+
+        const imagesUrl = await this.s3Service.uploadFile(file, key);  
+  
+          const imagen = await this.imagenSeguimientoRepository.create({
+            path: imagesUrl,
+            adopcion: adopcionFound,
+
+          });
+  
+         
+        
+  
+        const saved = await this.imagenSeguimientoRepository.save(imagen);
+  
+        return  saved;
+  
+      } catch (error) {
+        console.log(error);
+        return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Please check server logs',
+        };
       }
-
-      
-      const key = `${file.originalname.split('.')[0]}${Date.now()}.${file.originalname.split('.')[1]}`;
-      const imageUrl = await this.s3Service.uploadFile(file,key);
-
-      console.log(file)
-
-      const newImagen = this.imagenesRepository.create({
-        fechaSubida: new Date(),
-        nombre: key,
-        path: imageUrl
-      });
-
-      await this.imagenesRepository.save(newImagen);
-
-      const adopcionFound = await this.adopcionRepository.findOneOrFail({
-        where : {usuario : user},
-
-      })
-
-      const x = [];
-      x.push(newImagen);
-      
-      adopcionFound.adopcionImgs = x;
-
-    
-      const saved =  await this.adopcionRepository.save(adopcionFound);
-
-      return {
-        status : HttpStatus.OK,
-        imageUrl
-      }
-
-
-
-
+  
     }
 
 

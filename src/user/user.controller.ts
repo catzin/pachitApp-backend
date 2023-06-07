@@ -377,9 +377,9 @@ import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
   
     //Sube la imagen de seguimiento
     @Post('seguimientoImage')
-    @SetMetadata('roles','user')
+    // @SetMetadata('roles','user')
+    //@UseGuards(AuthGuard(), UserRoleGuard)
     @UseInterceptors(FileInterceptor('file'))
-    @UseGuards(AuthGuard(), UserRoleGuard)
     async uploadSeguimientoPicture(
       @UploadedFile() file : Express.Multer.File,
       @Body('idUsuario') id : string,
@@ -387,7 +387,7 @@ import { UpdateSeguimientoDto } from './dto/update-seguimiento.dto';
 
     ){
       try{
-        const result = await this.userService.uploadSeguimientoPicture(file , id);
+        const result = await this.userService.uploadImagenSeguimiento(id,file);
         return result;
       }catch(e){
         console.log(e);
