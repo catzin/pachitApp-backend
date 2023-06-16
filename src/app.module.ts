@@ -73,7 +73,7 @@ import { incidente } from './mascota/entities/incidente.entity';
       port: 3306,
       username: 'admin',
       password: 'm9IkWP47PjXDFwwS1LyS',
-      database: 'pachiDB',
+      database: 'pachiDBTest',
       entities: [
         Usuario, 
         civilState, 

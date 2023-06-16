@@ -13,9 +13,9 @@ export class GoogleController {
     //   await this.googleCalendarService.createEvent(eventData.accessToken, eventData.idToken, eventData.eventData);
     // }
 
-    @Post()
-    sendEmail(@Body() sendEmailDto: SendEmailDto): void {
-      // Aquí puedes utilizar las propiedades de `sendEmailDto` para enviar el email
-      this.googleCalendarService.sendEmail(sendEmailDto);
-    }
+    // @Post()
+    // sendEmail(@Body() sendEmailDto: SendEmailDto): void {
+    //   // Aquí puedes utilizar las propiedades de `sendEmailDto` para enviar el email
+    //   this.googleCalendarService.sendEmail(sendEmailDto);
+    // }
 }

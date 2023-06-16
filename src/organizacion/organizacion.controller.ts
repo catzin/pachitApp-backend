@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query, SetMetadata, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, Query, Res, SetMetadata, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { OrganizacionService } from './organizacion.service';
 import { CreateMascotaDto } from './dto/create-mascota.dto';
@@ -9,12 +9,22 @@ import { CreateRecordatorioDto } from './dto/create-recordatorio.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRoleGuard } from 'src/auth/guards/user-role/user-role.guard';
 import { IncidenciaDto } from './dto/create-incidencia.dto';
+import { CreateContratoDto } from './dto/create-contrato.dto';
 
+import * as PDFDocument from 'pdfkit';
+import { GoogleService } from 'src/google/google.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Usuario } from 'src/user/entity/usuario.entity';
+import { Repository } from 'typeorm';
+import { Response as ExpressResponse } from 'express';
 
 @Controller('organizacion')
 export class OrganizacionController {
 
-  constructor(private organizacionService: OrganizacionService) { }
+  constructor(private organizacionService: OrganizacionService,private readonly googleCalendarService: GoogleService,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
+    ) { }
 
 
   @Post('idOrganizacion')
@@ -383,13 +393,86 @@ export class OrganizacionController {
     }
   }
 
+  @Get('pdf')
+  async generatePdf(
+    @Res() res: ExpressResponse,
+    @Body() dto: CreateContratoDto,
+  ) {
+    const adopter = await this.usuarioRepository.findOne({
+      where: { nombre: dto.adopterName },
+    });
 
+    if (!adopter) {
+      throw new Error('No se encontró al adoptante');
+    }
 
+    const adopterEmail = adopter.correo;
 
+    const doc = new PDFDocument();
 
+    // Genera el contenido del PDF
+    doc.fontSize(16).text('CONTRATO DE ADOPCIÓN', { align: 'center' });
+    doc.moveDown(2);
+
+    doc.fontSize(14).text('Entre la organización:', { underline: true });
+    doc.text(dto.organizationName, { underline: false });
+    doc.moveDown();
+
+    doc.fontSize(14).text('Y el adoptante:', { underline: true });
+    doc.text(dto.adopterName, { underline: false });
+    doc.moveDown(2);
+
+    doc.fontSize(12).text('El adoptante se compromete a enviar fotos de seguimiento de la mascota adoptada periódicamente.');
+    doc.moveDown();
+
+    doc.fontSize(12).text('El adoptante se compromete a cuidar de la mascota y brindarle un hogar amoroso y seguro.');
+    doc.moveDown();
+
+    if (dto.additionalClause) {
+      doc.fontSize(12).text(dto.additionalClause);
+      doc.moveDown();
+    }
+
+    const signatureOptions = {
+      width: 200,
+      align: 'center'
+    };
+
+    doc.fontSize(10).text('___________________________', { align: 'left' });
+    doc.text('Firma del representante de la organización', { align: 'left' });
+    doc.moveUp();
+    doc.text('___________________________', { align: 'right' });
+    doc.text('Firma del adoptante', { align: 'right' });
+
+    // Finaliza el documento y redirige la salida a un WritableStream
+    const chunks = [];
+    doc.on('data', (chunk) => chunks.push(chunk));
+    doc.end();
+
+    // Espera a que el documento se haya generado completamente
+    await new Promise((resolve) => {
+      doc.on('end', resolve);
+    });
+
+    // Combina los fragmentos en un solo buffer
+    const pdfBytes = Buffer.concat(chunks);
+
+    // Configura el encabezado y tipo de contenido de la respuesta
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=contrato_adopcion.pdf');
+
+    // Envía el PDF generado como respuesta
+    res.end(pdfBytes);
+
+    // Enviar correo electrónico al destinatario correspondiente con el PDF adjunto
+    this.googleCalendarService.sendEmailContrato(adopterEmail, dto.adopterName, pdfBytes);
+  }
 
 
 
 }
+
+
+
 
 
